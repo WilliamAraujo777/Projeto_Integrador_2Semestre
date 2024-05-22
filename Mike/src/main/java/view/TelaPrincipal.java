@@ -4,16 +4,17 @@ import view.panels.*;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class TelaPrincipal extends javax.swing.JFrame {
 
     //private JPanel painelPrincipal = null;
-    private JPanel pnlCardLayout = null;
     private TelaVendas pnlVendas = null;
     private TelaProdutos pnlProdutos = null;
     private TelaClientes pnlClientes = null;
     private TelaRelatorio pnlRelatorios = null;
+    private String pnlAtivo="venda";
 
     public TelaPrincipal() {
         initComponents();
@@ -233,7 +234,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVendasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendasMouseClicked
+        
+        if(!pnlAtivo.equals("venda")){
+            pnlVendas.atualizaTela();
+        }        
         ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "venda");
+        
     }//GEN-LAST:event_btnVendasMouseClicked
 
     private void btnVendasMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendasMouseEntered
@@ -249,7 +255,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVendasMouseExited
 
     private void btnProdutosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnProdutosMouseClicked
-
+        pnlAtivo = "produto";
         ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "produtos");
     }//GEN-LAST:event_btnProdutosMouseClicked
 
@@ -266,11 +272,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnProdutosMouseExited
 
     private void btnClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnClientesMouseClicked
-
+        pnlAtivo = "clientes";
         ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "clientes");
     }//GEN-LAST:event_btnClientesMouseClicked
 
     private void btnRelatoriosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRelatoriosMouseClicked
+        pnlAtivo = "relatorios";
         ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "relatorios");
     }//GEN-LAST:event_btnRelatoriosMouseClicked
 

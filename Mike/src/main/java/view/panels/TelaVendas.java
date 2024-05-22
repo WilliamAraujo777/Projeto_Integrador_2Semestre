@@ -28,8 +28,7 @@ public class TelaVendas extends javax.swing.JPanel {
      */
     public TelaVendas() {
         initComponents();
-        atualizarTabelaCliente();
-        atualizarTabelaProduto();
+        atualizaTela();
     }
 
     /**
@@ -70,7 +69,7 @@ public class TelaVendas extends javax.swing.JPanel {
         btnAplicaDesconto1 = new javax.swing.JButton();
         btnAplicaDesconto2 = new javax.swing.JButton();
         fieldDesconto = new javax.swing.JTextField();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        checkSemCadastro = new javax.swing.JCheckBox();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(943, 528));
@@ -311,9 +310,14 @@ public class TelaVendas extends javax.swing.JPanel {
         add(pnlDesconto1);
         pnlDesconto1.setBounds(599, 410, 330, 37);
 
-        jCheckBox1.setText("Sem Cadastro");
-        add(jCheckBox1);
-        jCheckBox1.setBounds(10, 440, 100, 20);
+        checkSemCadastro.setText("Sem Cadastro");
+        checkSemCadastro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkSemCadastroActionPerformed(evt);
+            }
+        });
+        add(checkSemCadastro);
+        checkSemCadastro.setBounds(10, 440, 100, 20);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAdicionaProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionaProdutoActionPerformed
@@ -370,8 +374,6 @@ public class TelaVendas extends javax.swing.JPanel {
               String nomeCliente = clientes.getValueAt(linha, 1).toString();
               
               lblUsuarioSelecionado.setText(nomeCliente);
-              
-              
          }else{
            JOptionPane.showMessageDialog(this, "Nenhuma linha selecionada.");
          }
@@ -413,6 +415,16 @@ public class TelaVendas extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnFinalizaCompraActionPerformed
 
+    private void checkSemCadastroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkSemCadastroActionPerformed
+        if(checkSemCadastro.isSelected()) {
+            btnAdicionaCliente.setEnabled(false);
+            lblUsuarioSelecionado.setText("Compra Sem Cadastro");
+        }else{
+            btnAdicionaCliente.setEnabled(true);
+            lblUsuarioSelecionado.setText("--");
+        }
+    }//GEN-LAST:event_checkSemCadastroActionPerformed
+
     private void atualizaQtdRemovida(int id, String nomeProduto, int qtdRemovida, double precoProduto) {
         DefaultTableModel produtos = (DefaultTableModel) tblProdutos.getModel();
         boolean produtoEncontrado = false;
@@ -441,7 +453,7 @@ public class TelaVendas extends javax.swing.JPanel {
         if ((verificaCarrinho())) {
             // Verifica se o produto já está no carrinho
             for (int i = 0; i < carrinho.getRowCount(); i++) {
-                String carrinhoProduto = carrinho.getValueAt(i, 0).toString();
+                String carrinhoProduto = carrinho.getValueAt(i, 1).toString();
                 if (carrinhoProduto.equals(nomeProduto)) {
                     // Produto já está no carrinho, então aumenta a quantidade
                     int quantidadeCarrinho = Integer.parseInt(carrinho.getValueAt(i, 2).toString());
@@ -491,7 +503,11 @@ public class TelaVendas extends javax.swing.JPanel {
 
         fieldTotal.setText(String.format("%.2f", precoTotal));
     }
-
+    
+    public void atualizaTela(){
+        atualizarTabelaCliente();
+        atualizarTabelaProduto();
+    }
     public void atualizarTabelaCliente() {
         SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
         try {
@@ -549,11 +565,11 @@ public class TelaVendas extends javax.swing.JPanel {
     private javax.swing.JButton btnPesquisaProduto;
     private javax.swing.JComboBox<String> cbTipoPesquisa;
     private javax.swing.JComboBox<String> cbTipoPesquisaClientes;
+    private javax.swing.JCheckBox checkSemCadastro;
     private javax.swing.JTextField fieldDesconto;
     private javax.swing.JTextField fieldPesquisaCliente;
     private javax.swing.JTextField fieldPesquisaProduto;
     private javax.swing.JTextField fieldTotal;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
