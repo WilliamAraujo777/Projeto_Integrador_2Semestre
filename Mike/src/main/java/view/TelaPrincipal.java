@@ -221,9 +221,12 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVendasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendasMouseClicked
+        
+        
         if(!pnlAtivo.equals("venda")){
             pnlVendas.atualizaTela();
         }        
+        pnlAtivo="venda";
         ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "venda");    
     }//GEN-LAST:event_btnVendasMouseClicked
 
@@ -263,7 +266,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnClientesMouseClicked
 
     private void btnRelatoriosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRelatoriosMouseClicked
-        pnlAtivo = "relatorios";
+               
+        if(!pnlAtivo.equals("relatorios")){
+            pnlRelatorios.atualizarTabelaVendas();
+        }    
+        pnlAtivo = "relatorios"; 
         ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "relatorios");
     }//GEN-LAST:event_btnRelatoriosMouseClicked
 

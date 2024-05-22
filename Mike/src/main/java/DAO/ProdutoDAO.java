@@ -123,7 +123,7 @@ public class ProdutoDAO {
             conexao = DriverManager.getConnection(url);
 
             // SELECT
-            PreparedStatement comandoSQL = conexao.prepareStatement("SELECT * FROM produto");
+            PreparedStatement comandoSQL = conexao.prepareStatement("SELECT * FROM produto where qtdProduto > 0");
 //            PreparedStatement comandoSQL = conexao.prepareStatement("SELECT p.idProduto, p.nomeProduto, p.precoProduto, p.qtdProduto, c.nomeCategoria FROM produto p INNER JOIN categoria c ON p.idCategoria = c.idCategoria");
 
             // Executando o SELECT

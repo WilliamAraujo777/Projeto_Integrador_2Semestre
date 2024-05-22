@@ -8,11 +8,18 @@ public class Venda {
     private double valorVenda;
     private char statusVenda;
     private Date dtVenda;
-    Cliente cliente = new Cliente();
+    Cliente cliente;
 
-    public Venda(double valorVenda, char statusVenda, Date dtVenda, Cliente cliente) {
+    public Venda(double valorVenda, Date dtVenda, Cliente cliente) {
         this.valorVenda = valorVenda;
-        this.statusVenda = statusVenda;
+        this.dtVenda = dtVenda;
+        this.cliente = cliente;
+    }
+
+    
+    public Venda(int idVenda, double valorVenda, Date dtVenda, Cliente cliente) {
+        this.idVenda = idVenda;
+        this.valorVenda = valorVenda;
         this.dtVenda = dtVenda;
         this.cliente = cliente;
     }

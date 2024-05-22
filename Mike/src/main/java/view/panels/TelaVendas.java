@@ -532,7 +532,7 @@ public class TelaVendas extends javax.swing.JPanel {
         Date now = new Date();
         
         try{
-            venda = new Venda(valor, 'E',now,cliente);
+            venda = new Venda(valor, now,cliente);
             List<Produto> listaProdutos = criarListaProdutos(tblCarrinho);
           
             venda_desc =  new VendaDescricao(venda,listaProdutos);

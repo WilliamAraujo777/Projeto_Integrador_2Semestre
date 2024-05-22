@@ -1,16 +1,10 @@
 package model.beans;
-
-import java.util.Date;
 import java.util.List;
 
 public class VendaDescricao {
 
     private Venda venda; 
     private List<Produto> listaProdutos;
-    private Date dtVenda;
-    private double precoProduto;
-    private double qtdProduto;
-    
     
     public VendaDescricao() {
     
@@ -35,13 +29,4 @@ public class VendaDescricao {
     public void setListaProdutos(List<Produto> listaProdutos) {
         this.listaProdutos = listaProdutos;
     }
-    
-
-    
-    
-    
-    
-
-    
-
 }

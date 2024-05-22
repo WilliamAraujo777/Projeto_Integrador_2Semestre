@@ -22,6 +22,11 @@ public class Produto {
         this.idCategoria = idCategoria;
     }
 
+    public Produto(int idProduto, int qtdProduto) {
+        this.idProduto = idProduto;
+        this.qtdProduto = qtdProduto;
+    }
+
     public Produto(String nomeProduto, double precoProduto, int qtdProduto, int idCategoria) {
         this.nomeProduto = nomeProduto;
         this.precoProduto = precoProduto;

@@ -4,8 +4,14 @@
  */
 package DAO;
 
+import static DAO.ProdutoDAO.url;
 import java.sql.*;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.beans.Cliente;
 import model.beans.Produto;
 import model.beans.Venda;
 import model.beans.VendaDescricao;
@@ -56,6 +62,7 @@ public class VendaDAO {
                 sql.setInt(3, produto.getQtdProduto());
                 sql.setDouble(4, produto.getPrecoProduto());
                 sql.executeUpdate();
+                alteraQuantidade(produto);
             }
             
         } catch (ClassNotFoundException ex) {
@@ -64,4 +71,82 @@ public class VendaDAO {
             throw new SQLException("Erro de SQL, contate o adminstrador!");
         }
     }
+    
+     public static boolean alteraQuantidade(Produto obj) {
+        boolean retorno = false;
+        Connection conexao = null;
+
+        try {
+            // Carrega o driver do SQLite
+            Class.forName("org.sqlite.JDBC");
+
+            // Cria conexão com o banco
+            conexao = DriverManager.getConnection(url);
+
+            PreparedStatement comandoSQL = conexao.prepareStatement("UPDATE produto SET qtdProduto = qtdProduto - ? WHERE idProduto = ?");
+            comandoSQL.setInt(1, obj.getQtdProduto());
+            comandoSQL.setInt(2, obj.getIdProduto());
+           
+            int linhasAfetadas = comandoSQL.executeUpdate();
+
+            if (linhasAfetadas > 0) {
+                retorno = true;
+            }
+
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return retorno;
+    }
+     
+    public static ArrayList<Venda> listar() throws ClassNotFoundException, SQLException, ParseException {
+        ArrayList<Venda> lstVenda = new ArrayList<>();
+        Cliente cliente = new Cliente();
+        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+        
+        Connection conexao;
+
+        try {
+            // Carregando o driver do SQLite
+            Class.forName("org.sqlite.JDBC");
+
+            // Criando conexão com o banco
+            conexao = DriverManager.getConnection(url);
+
+            // SELECT
+            PreparedStatement comandoSQL = conexao.prepareStatement("SELECT * FROM venda");
+
+            // Executando o SELECT
+            ResultSet rs = comandoSQL.executeQuery();
+            
+            
+            while (rs.next()) {
+                int idVenda         = rs.getInt("idVenda");
+                Double valor        = rs.getDouble("valorVenda");
+                String  data        = rs.getString("dtVenda");
+                String cpfCliente   = rs.getString("cpfCliente");
+                
+                cliente.setCpfCliente(cpfCliente);
+                java.util.Date dataDate = formato.parse(data);
+                
+                Venda item = new Venda(idVenda, valor, dataDate,cliente);
+
+                lstVenda.add(item);
+            }
+        } catch (ClassNotFoundException ex) {
+             throw new ClassNotFoundException("Erro, contate o adminstrador!");
+        } catch (SQLException ex) {
+            throw new SQLException("Erro de SQL, contate o adminstrador!");        
+        } catch (ParseException ex) {
+            throw new ParseException("Erro de SQL, contate o adminstrador!",0);
+        }
+        return lstVenda;
+    }
+    
+    
+    
+    
 }
