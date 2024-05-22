@@ -8,7 +8,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class TelaPrincipal extends javax.swing.JFrame {
-
+    
+    Object[] options = { "Confirmar", "Cancelar" }; 
+    
     //private JPanel painelPrincipal = null;
     private TelaVendas pnlVendas = null;
     private TelaProdutos pnlProdutos = null;
@@ -255,8 +257,21 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVendasMouseExited
 
     private void btnProdutosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnProdutosMouseClicked
-        pnlAtivo = "produto";
-        ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "produtos");
+        if(pnlVendas.vendaEmAndamento && pnlAtivo.equals("venda")){
+            int resposta = JOptionPane.showOptionDialog(
+                    null,
+                    "Parece que uma venda está em andamento, caso saia ela será perdida\nDeseja Prosseguir?",
+                    "Informação", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+            
+            if(resposta == 0){
+                pnlAtivo = "produto";
+                ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "produtos");
+            }    
+        }else{
+            pnlAtivo = "produto";
+            ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "produtos");
+        }
+        
     }//GEN-LAST:event_btnProdutosMouseClicked
 
     private void btnProdutosMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnProdutosMouseEntered
@@ -272,8 +287,20 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnProdutosMouseExited
 
     private void btnClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnClientesMouseClicked
-        pnlAtivo = "clientes";
-        ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "clientes");
+        if(pnlVendas.vendaEmAndamento && pnlAtivo.equals("venda")){
+            int resposta = JOptionPane.showOptionDialog(
+                    null,
+                    "Parece que uma venda está em andamento, caso saia ela será perdida\nDeseja Prosseguir?",
+                    "Informação", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+            
+            if(resposta == 0){
+                pnlAtivo = "clientes";
+                ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "clientes");
+            }    
+        }else{
+            pnlAtivo = "clientes";
+            ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "clientes");
+        }
     }//GEN-LAST:event_btnClientesMouseClicked
 
     private void btnRelatoriosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRelatoriosMouseClicked
