@@ -4,19 +4,18 @@
  */
 package view.panels;
 
-import DAO.ClienteDAO;
-import DAO.ProdutoDAO;
-import java.awt.Color;
+import DAO.*;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import model.beans.Cliente;
-import model.beans.Produto;
-
+import model.beans.*;
 /**
  *
  * @author William
@@ -25,6 +24,12 @@ public class TelaVendas extends javax.swing.JPanel {
     
     public boolean vendaEmAndamento = false;
     
+    Produto produto;
+    Cliente cliente;
+    Venda venda;
+    VendaDescricao venda_desc;
+    
+ 
     public TelaVendas() {
         initComponents();
         atualizaTela();
@@ -323,9 +328,9 @@ public class TelaVendas extends javax.swing.JPanel {
             TableModel produtos = tblProdutos.getModel();
             boolean controle = true;
 
-            int idProduto = Integer.parseInt(produtos.getValueAt(linha, 0).toString());
-            String nomeProduto = produtos.getValueAt(linha, 1).toString();
-            int qtdProduto = Integer.parseInt(produtos.getValueAt(linha, 2).toString());
+            int idProduto       = Integer.parseInt(produtos.getValueAt(linha, 0).toString());
+            String nomeProduto  = produtos.getValueAt(linha, 1).toString();
+            int qtdProduto      = Integer.parseInt(produtos.getValueAt(linha, 2).toString());
             double precoProduto = Double.parseDouble(produtos.getValueAt(linha, 3).toString());
 
             while (controle) {
@@ -364,16 +369,19 @@ public class TelaVendas extends javax.swing.JPanel {
 
     private void btnAdicionaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionaClienteActionPerformed
          int linha = tblClientes.getSelectedRow();
+
          if (linha != -1) {
+             
               DefaultTableModel clientes = (DefaultTableModel) tblClientes.getModel();
+              String cpfCliente = clientes.getValueAt(linha, 0).toString();
               String nomeCliente = clientes.getValueAt(linha, 1).toString();
+              
+              cliente = new Cliente(cpfCliente,nomeCliente);
               
               lblUsuarioSelecionado.setText(nomeCliente);
          }else{
            JOptionPane.showMessageDialog(this, "Nenhuma linha selecionada.");
-         }
-         
-         
+         }  
     }//GEN-LAST:event_btnAdicionaClienteActionPerformed
 
     private void btnEliminaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminaActionPerformed
@@ -407,7 +415,7 @@ public class TelaVendas extends javax.swing.JPanel {
     }//GEN-LAST:event_btnAplicaDesconto2ActionPerformed
 
     private void btnFinalizaCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFinalizaCompraActionPerformed
-        // TODO add your handling code here:
+        efetuaVenda();
     }//GEN-LAST:event_btnFinalizaCompraActionPerformed
 
     private void checkSemCadastroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkSemCadastroActionPerformed
@@ -479,7 +487,6 @@ public class TelaVendas extends javax.swing.JPanel {
 
         if (novaQuantidade > 0) {
             // Atualiza a quantidade no produto
-            qtdProduto = novaQuantidade;
             produtosModel.setValueAt(novaQuantidade, linha, 2);
         } else {
             // Remove a linha da tabela se a quantidade for zero
@@ -500,6 +507,62 @@ public class TelaVendas extends javax.swing.JPanel {
         fieldTotal.setText(String.format("%.2f", precoTotal));
     }
     
+    private void efetuaVenda(){
+        
+        VendaDAO daovenda = new VendaDAO();
+        
+        if(lblUsuarioSelecionado.getText().equals("--")){
+            JOptionPane.showMessageDialog(this, 
+                    "Adicione um cliente a venda, ou selecione 'Sem Cadastro'",
+                    "Atenção", 
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        double valor = Double.parseDouble(fieldTotal.getText().replace(",", "."));
+        
+        if(valor == 0.00){
+            JOptionPane.showMessageDialog(this, 
+                    "Adicione produtos no carrinho!",
+                    "Atenção", 
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        Date now = new Date();
+        
+        try{
+            venda = new Venda(valor, 'E',now,cliente);
+            List<Produto> listaProdutos = criarListaProdutos(tblCarrinho);
+          
+            venda_desc =  new VendaDescricao(venda,listaProdutos);
+            
+            daovenda.efetuaVenda(venda_desc);    
+            
+            JOptionPane.showMessageDialog(this, "Venda Realizado com Sucesso!");
+            atualizaTela();
+            
+        } catch (ClassNotFoundException | SQLException ex) {
+                JOptionPane.showMessageDialog(this, ex, "ERRO", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    public static List<Produto> criarListaProdutos(JTable tblCarrinho) {
+        List<Produto> listaProdutos = new ArrayList<>();
+        TableModel model = tblCarrinho.getModel();
+        
+        for (int i = 0; i < model.getRowCount(); i++) {
+            int idProduto = Integer.parseInt(model.getValueAt(i, 0).toString());
+            int qtdProduto = Integer.parseInt(model.getValueAt(i, 2).toString());
+            double precoQuantidade = Double.parseDouble(model.getValueAt(i, 4).toString());
+
+            Produto produto = new Produto(idProduto,precoQuantidade,qtdProduto);
+            listaProdutos.add(produto);
+        }
+
+        return listaProdutos;
+    }
+    
     public void atualizaTela(){
         atualizarTabelaCliente();
         atualizarTabelaProduto();
@@ -510,9 +573,9 @@ public class TelaVendas extends javax.swing.JPanel {
         checkSemCadastro.setSelected(false);
         btnAdicionaCliente.setEnabled(true);
         vendaEmAndamento =false;
-        atualizaPrecoTotal();
-        
+        atualizaPrecoTotal();   
     }
+    
     public void atualizarTabelaCliente() {
         SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
         try {

@@ -5,23 +5,21 @@
 package DAO;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
+import java.util.List;
 import model.beans.Produto;
 import model.beans.Venda;
+import model.beans.VendaDescricao;
 
 public class VendaDAO {
 
     static String url = "jdbc:sqlite:C:/sqlite/mike";
 
-    public static boolean efetuaVenda(Venda obj, Produto produto) {
+    public void efetuaVenda(VendaDescricao venda)throws ClassNotFoundException, SQLException  {
         boolean retorno = false;
         Connection conexao = null;
 
         try {
-            java.util.Date utilDate = obj.getDtVenda();
+            java.util.Date utilDate = venda.getVenda().getDtVenda();
             java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
             //carregando driver;
@@ -30,30 +28,40 @@ public class VendaDAO {
             //abrindo conexao
             conexao = (Connection) DriverManager.getConnection(url);
 
-            //preparando query para o banco de dados;;
-            PreparedStatement sql = conexao.prepareStatement("INSERT INTO venda(valorVenda, statusVenda,dtVenda, cpfCliente)(?,?,?,?)");
+            //preparando query para o banco de dados;
+            PreparedStatement sql = conexao.prepareStatement("INSERT INTO venda(valorVenda,dtVenda, cpfCliente) VALUES(?,?,?)");
+            
+            
             //parametros da query 
-            sql.setDouble(1, obj.getValorVenda());
-            sql.setString(2, String.valueOf(obj.getStatusVenda()));
-            sql.setString(3, String.valueOf(sqlDate.toString()));
-            sql.setString(4, String.valueOf(obj.getCpfCliente()));
-
-//            //executa comando sql
-//            int linhasAfetadas = sql.executeUpdate();
-//            for (Produto cont : listaProdutos) {
-//                JOptionPane.showMessageDialog(null, cont.getNomeProduto());
-//            }
-
-//            if (linhasAfetadas > 0) {
-//                retorno = true;
-//            }
+            sql.setDouble(1, venda.getVenda().getValorVenda());
+            sql.setString(2, String.valueOf(sqlDate.toString()));
+            sql.setString(3, String.valueOf(venda.getVenda().getCliente().getCpfCliente()));
+            
+            //executa comando sql
+            sql.executeUpdate();
+            
+            // Obter o ID da venda inserida
+            ResultSet rs = sql.getGeneratedKeys();
+            int idVenda = 0;
+            if (rs.next()) {
+                idVenda = rs.getInt(1);
+            }
+            
+            sql = conexao.prepareStatement("INSERT INTO venda_descricao(idVenda,idProduto, qtdProduto, precoProduto) VALUES(?,?,?,?)");
+            
+            // Inserir descrição da venda
+            for (Produto produto : venda.getListaProdutos()) {
+                sql.setInt(1, idVenda);
+                sql.setInt(2, produto.getIdProduto());
+                sql.setInt(3, produto.getQtdProduto());
+                sql.setDouble(4, produto.getPrecoProduto());
+                sql.executeUpdate();
+            }
+            
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ClassNotFoundException("Erro, contate o adminstrador!");
         } catch (SQLException ex) {
-            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new SQLException("Erro de SQL, contate o adminstrador!");
         }
-
-        return retorno;
     }
-
 }

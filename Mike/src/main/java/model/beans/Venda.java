@@ -8,6 +8,22 @@ public class Venda {
     private double valorVenda;
     private char statusVenda;
     private Date dtVenda;
+    Cliente cliente = new Cliente();
+
+    public Venda(double valorVenda, char statusVenda, Date dtVenda, Cliente cliente) {
+        this.valorVenda = valorVenda;
+        this.statusVenda = statusVenda;
+        this.dtVenda = dtVenda;
+        this.cliente = cliente;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
 
     public Date getDtVenda() {
         return dtVenda;
@@ -16,14 +32,12 @@ public class Venda {
     public void setDtVenda(Date dtVenda) {
         this.dtVenda = dtVenda;
     }
-    private String cpfCliente;
 
     public Venda(int idVenda, double valorVenda, char statusVenda, Date dtVenda, String cpfCliente) {
         this.idVenda = idVenda;
         this.valorVenda = valorVenda;
         this.statusVenda = statusVenda;
         this.dtVenda = dtVenda;
-        this.cpfCliente = cpfCliente;
     }
 
     public Venda() {
@@ -51,14 +65,6 @@ public class Venda {
 
     public void setStatusVenda(char statusVenda) {
         this.statusVenda = statusVenda;
-    }
-
-    public String getCpfCliente() {
-        return cpfCliente;
-    }
-
-    public void setCpfCliente(String cpfCliente) {
-        this.cpfCliente = cpfCliente;
     }
 
 }

@@ -21,10 +21,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
     public TelaPrincipal() {
         initComponents();
         initialize();
-        mouseEmcimaPainel(btnClientes);
-        configurarBotaoMouseExited(btnClientes);
-        mouseEmcimaPainel(btnRelatorios);
-        configurarBotaoMouseExited(btnRelatorios);
+ 
         this.getContentPane().setBackground(new Color(255, 255, 255));
     }
 
@@ -60,12 +57,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnVendasMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnVendasMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnVendasMouseExited(evt);
-            }
         });
 
         jLabel2.setFont(new java.awt.Font("Futura-Light", 0, 18)); // NOI18N
@@ -93,12 +84,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         btnProdutos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnProdutosMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnProdutosMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnProdutosMouseExited(evt);
             }
         });
 
@@ -236,25 +221,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVendasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendasMouseClicked
-        
         if(!pnlAtivo.equals("venda")){
             pnlVendas.atualizaTela();
         }        
-        ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "venda");
-        
+        ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "venda");    
     }//GEN-LAST:event_btnVendasMouseClicked
-
-    private void btnVendasMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendasMouseEntered
-        btnVendas.setBackground(new Color(200, 200, 200));
-        jLabel2.setForeground(Color.white);
-        Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-        btnVendas.setCursor(cursor);
-    }//GEN-LAST:event_btnVendasMouseEntered
-
-    private void btnVendasMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendasMouseExited
-        btnVendas.setBackground(Color.white);
-        jLabel2.setForeground(Color.black);
-    }//GEN-LAST:event_btnVendasMouseExited
 
     private void btnProdutosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnProdutosMouseClicked
         if(pnlVendas.vendaEmAndamento && pnlAtivo.equals("venda")){
@@ -274,18 +245,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnProdutosMouseClicked
 
-    private void btnProdutosMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnProdutosMouseEntered
-        btnProdutos.setBackground(new Color(200, 200, 200));
-        jLabel3.setForeground(Color.white);
-        Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-        btnProdutos.setCursor(cursor);
-    }//GEN-LAST:event_btnProdutosMouseEntered
-
-    private void btnProdutosMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnProdutosMouseExited
-        btnProdutos.setBackground(Color.white);
-        jLabel3.setForeground(Color.black);
-    }//GEN-LAST:event_btnProdutosMouseExited
-
     private void btnClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnClientesMouseClicked
         if(pnlVendas.vendaEmAndamento && pnlAtivo.equals("venda")){
             int resposta = JOptionPane.showOptionDialog(
@@ -293,7 +252,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
                     "Parece que uma venda está em andamento, caso saia ela será perdida\nDeseja Prosseguir?",
                     "Informação", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
             
-            if(resposta == 0){
+            if(resposta != 0){
                 pnlAtivo = "clientes";
                 ((CardLayout) painelPrincipal.getLayout()).show(painelPrincipal, "clientes");
             }    
@@ -358,19 +317,15 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private void initialize() {
         setaPainel();
-        //this.setSize(1200,560); // Substitua 800 e 600 pelos valores desejados de largura e altura
-
-        // Centraliza a janela na tela
         this.setLocationRelativeTo(null);
+        ComportamentoPaineis();
     }
 
     public void setaPainel() {
-
         painelPrincipal.add(getVendasPanel(), getVendasPanel().getName());
         painelPrincipal.add(getProdutosPanel(), getProdutosPanel().getName());
         painelPrincipal.add(getClientesPanel(), getClientesPanel().getName());
         painelPrincipal.add(getRelatorioPanel(), getRelatorioPanel().getName());
-
     }
 
     private TelaVendas getVendasPanel() {
@@ -408,6 +363,14 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
         return pnlRelatorios;
     }
+    
+    private void ComportamentoPaineis(){
+        mouseEmcimaPainel(btnClientes);
+        mouseEmcimaPainel(btnProdutos);
+        mouseEmcimaPainel(btnVendas);
+        mouseEmcimaPainel(btnRelatorios);
+        
+    }
 
     private void mouseEmcimaPainel(JPanel panel) {
         panel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -418,12 +381,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
                 panel.setCursor(cursor);
             }
-            // Adicione outros métodos de mouse aqui, se necessário
-        });
-    }
-
-    private void configurarBotaoMouseExited(JPanel panel) {
-        panel.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 panel.setBackground(Color.white);
@@ -432,5 +389,4 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
     }
-
 }

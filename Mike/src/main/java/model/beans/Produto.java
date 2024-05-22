@@ -8,6 +8,12 @@ public class Produto {
     private int qtdProduto;
     private int idCategoria;
 
+    public Produto(int idProduto, double precoProduto, int qtdProduto) {
+        this.idProduto = idProduto;
+        this.precoProduto = precoProduto;
+        this.qtdProduto = qtdProduto;
+    }
+
     public Produto(int idProduto, String nomeProduto, double precoProduto, int qtdProduto, int idCategoria) {
         this.idProduto = idProduto;
         this.nomeProduto = nomeProduto;
