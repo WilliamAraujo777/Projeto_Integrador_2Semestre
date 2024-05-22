@@ -20,10 +20,6 @@ public class VendaDAO {
         boolean retorno = false;
         Connection conexao = null;
 
-        ArrayList<Produto> listaProdutos = new ArrayList<Produto>();
-
-        listaProdutos.add(produto);
-
         try {
             java.util.Date utilDate = obj.getDtVenda();
             java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
@@ -34,19 +30,19 @@ public class VendaDAO {
             //abrindo conexao
             conexao = (Connection) DriverManager.getConnection(url);
 
-//            //preparando query para o banco de dados;;
-//            PreparedStatement sql = conexao.prepareStatement("INSERT INTO venda(valorVenda, statusVenda,dtVenda, cpfCliente)(?,?,?,?)");
-//            //parametros da query 
-//            sql.setDouble(1, obj.getValorVenda());
-//            sql.setString(2, String.valueOf(obj.getStatusVenda()));
-//            sql.setString(3, String.valueOf(sqlDate.toString()));
-//            sql.setString(4, String.valueOf(obj.getCpfCliente()));
-//
+            //preparando query para o banco de dados;;
+            PreparedStatement sql = conexao.prepareStatement("INSERT INTO venda(valorVenda, statusVenda,dtVenda, cpfCliente)(?,?,?,?)");
+            //parametros da query 
+            sql.setDouble(1, obj.getValorVenda());
+            sql.setString(2, String.valueOf(obj.getStatusVenda()));
+            sql.setString(3, String.valueOf(sqlDate.toString()));
+            sql.setString(4, String.valueOf(obj.getCpfCliente()));
+
 //            //executa comando sql
 //            int linhasAfetadas = sql.executeUpdate();
-            for (Produto cont : listaProdutos) {
-                JOptionPane.showMessageDialog(null, cont.getNomeProduto());
-            }
+//            for (Produto cont : listaProdutos) {
+//                JOptionPane.showMessageDialog(null, cont.getNomeProduto());
+//            }
 
 //            if (linhasAfetadas > 0) {
 //                retorno = true;

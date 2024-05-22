@@ -61,6 +61,8 @@ public class TelaVendas extends javax.swing.JPanel {
         pnlValor = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         fieldTotal = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        lblUsuarioSelecionado = new javax.swing.JLabel();
         btnFinalizaCompra = new javax.swing.JButton();
         btnElimina = new javax.swing.JButton();
         pnlDesconto1 = new javax.swing.JPanel();
@@ -143,14 +145,14 @@ public class TelaVendas extends javax.swing.JPanel {
         add(btnAdicionaProduto);
         btnAdicionaProduto.setBounds(360, 230, 100, 23);
 
-        btnAdicionaCliente.setText("Adicionar >>");
+        btnAdicionaCliente.setText("Selecionar");
         btnAdicionaCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAdicionaClienteActionPerformed(evt);
             }
         });
         add(btnAdicionaCliente);
-        btnAdicionaCliente.setBounds(360, 410, 100, 23);
+        btnAdicionaCliente.setBounds(360, 410, 84, 23);
 
         cbTipoPesquisa.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Codigo", "Nome" }));
         add(cbTipoPesquisa);
@@ -192,12 +194,20 @@ public class TelaVendas extends javax.swing.JPanel {
 
         fieldTotal.setEnabled(false);
 
+        jLabel3.setText("Usuario Selecionado:");
+
+        lblUsuarioSelecionado.setText("--");
+
         javax.swing.GroupLayout pnlValorLayout = new javax.swing.GroupLayout(pnlValor);
         pnlValor.setLayout(pnlValorLayout);
         pnlValorLayout.setHorizontalGroup(
             pnlValorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlValorLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblUsuarioSelecionado)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(fieldTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -209,7 +219,9 @@ public class TelaVendas extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(pnlValorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(fieldTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(fieldTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(lblUsuarioSelecionado))
                 .addGap(2, 2, 2))
         );
 
@@ -352,7 +364,19 @@ public class TelaVendas extends javax.swing.JPanel {
     }//GEN-LAST:event_btnAdicionaProdutoActionPerformed
 
     private void btnAdicionaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionaClienteActionPerformed
-        // TODO add your handling code here:
+         int linha = tblClientes.getSelectedRow();
+         if (linha != -1) {
+              DefaultTableModel clientes = (DefaultTableModel) tblClientes.getModel();
+              String nomeCliente = clientes.getValueAt(linha, 1).toString();
+              
+              lblUsuarioSelecionado.setText(nomeCliente);
+              
+              
+         }else{
+           JOptionPane.showMessageDialog(this, "Nenhuma linha selecionada.");
+         }
+         
+         
     }//GEN-LAST:event_btnAdicionaClienteActionPerformed
 
     private void btnEliminaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminaActionPerformed
@@ -532,9 +556,11 @@ public class TelaVendas extends javax.swing.JPanel {
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel lblUsuarioSelecionado;
     private javax.swing.JPanel pnlCarrinho;
     private javax.swing.JPanel pnlClientes;
     private javax.swing.JPanel pnlDesconto1;
