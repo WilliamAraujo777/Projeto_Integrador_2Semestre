@@ -18,22 +18,24 @@ import javax.swing.JTextField;
 import model.beans.Cliente;
 import model.beans.Endereco;
 import util.Validador;
+import view.panels.TelaClientes;
 
 public class CadastroCliente extends JDialog {
-
+    TelaClientes telaCliente;
     private List<JTextField> camposDeEntrada;
 
     Cliente alterarCliente = null;
 //    Endereco alterarEndereco = null;
 
-    public CadastroCliente(JFrame parent) {
+    public CadastroCliente(JFrame parent, TelaClientes telaCliente) {
         super(parent, true);
         initComponents();
         apenasNumeros(fieldNumero);
         this.getContentPane().setBackground(new Color(255, 255, 255));
+        this.telaCliente = telaCliente;
     }
 
-    public CadastroCliente(Cliente obj,JFrame parent) {
+    public CadastroCliente(Cliente obj,JFrame parent,TelaClientes telaCliente) {
         super(parent, true);
         initComponents();
         this.getContentPane().setBackground(new Color(255, 255, 255));
@@ -55,8 +57,9 @@ public class CadastroCliente extends JDialog {
         fieldCidade.setText(String.valueOf(alterarCliente.getEndereco().getCidade()));
         cbEstado.setSelectedItem(alterarCliente.getEndereco().getComplemento());
         fieldComplemento.setText(String.valueOf(alterarCliente.getEndereco().getComplemento()));
-
+        
         btnAdicionar.setText("Editar");
+        this.telaCliente = telaCliente;
     }
 
     @SuppressWarnings("unchecked")
@@ -445,6 +448,8 @@ public class CadastroCliente extends JDialog {
 
             if (funcionou == true) {
                 JOptionPane.showMessageDialog(fieldComplemento, "Cadastro Realizado com Sucesso!");
+                telaCliente.atualizarTabela();
+                this.dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "Erro ao cadastrar cliente!");
 
@@ -455,7 +460,7 @@ public class CadastroCliente extends JDialog {
             JOptionPane.showMessageDialog(fieldComplemento, "Prrencha todos os campos obrigatórios!");
         }
 
-        this.dispose();
+        
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed

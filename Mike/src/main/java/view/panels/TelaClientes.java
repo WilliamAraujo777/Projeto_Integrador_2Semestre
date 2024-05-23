@@ -153,7 +153,7 @@ public class TelaClientes extends javax.swing.JPanel {
 
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
         // TODO add your handling code here:
-        CadastroCliente cadastro = new CadastroCliente(this.parent);
+        CadastroCliente cadastro = new CadastroCliente(this.parent, this);
         cadastro.setVisible(true);
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
@@ -210,7 +210,7 @@ public class TelaClientes extends javax.swing.JPanel {
                 Endereco endereco = EnderecoDAO.obterEnderecoPorCPF(cpfCliente);
 
                 Cliente alterarCliente = new Cliente(cpfCliente, nomeCliente, sexoChar, emailCliente, numeroCliente, dataDate, endereco); // Passando os dados para o construtor que os modifica
-                CadastroCliente cadastro = new CadastroCliente(alterarCliente,this.parent); // Chama a tela de cadastro no modo de alteração
+                CadastroCliente cadastro = new CadastroCliente(alterarCliente,this.parent, this); // Chama a tela de cadastro no modo de alteração
                 cadastro.setVisible(true);
             } catch (ParseException | ClassNotFoundException | SQLException ex) {
                 Logger.getLogger(TelaClientes.class.getName()).log(Level.SEVERE, null, ex);
