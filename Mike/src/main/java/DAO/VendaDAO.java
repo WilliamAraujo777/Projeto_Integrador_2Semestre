@@ -103,16 +103,16 @@ public class VendaDAO {
         return retorno;
     }
 
-    public static VendaDescricao buscarPorVenda(int idVenda) throws ParseException {
+    public static ArrayList<VendaDescricao>buscarPorVenda(int idVenda) throws ParseException {
         
         Venda venda;
         Produto produto;
         Cliente cliente;
-        VendaDescricao retorno = null;
 
         Connection conexao = null;
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-
+        ArrayList<VendaDescricao> lstVenda = new ArrayList<>();
+        
                 
         try {
             // Carregando o driver do SQLite
@@ -153,15 +153,13 @@ public class VendaDAO {
                 produto.setIdProduto(idProd);
                 produto.setNomeProduto(nomeProduto);
                 produto.setQtdProduto(qtdProduto);
-                
-                JOptionPane.showMessageDialog(null, produto.getNomeProduto());    
-
-                
+                                
                 cliente = new Cliente(cpfCliente,nomeCliente);
                 venda = new Venda(precoProduto, dataDate, cliente);
                 
                 
-                retorno = new VendaDescricao(venda,produto);
+                VendaDescricao item = new VendaDescricao(venda,produto);
+                lstVenda.add(item);
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -169,7 +167,7 @@ public class VendaDAO {
             Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } 
 
-        return retorno;
+        return lstVenda;
     }
 
     public static ArrayList<Venda> listar() throws ClassNotFoundException, SQLException, ParseException {

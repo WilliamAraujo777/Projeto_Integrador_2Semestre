@@ -1,11 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view.panels;
 
-import DAO.ProdutoDAO;
 import DAO.VendaDAO;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.JDialog;
@@ -18,17 +14,19 @@ import model.beans.*;
  * @author Pichau
  */
 public class TelaRelatorioCompra extends JDialog {
+
     /**
      * Creates new form TelaRelatorioCompra
      */
     public TelaRelatorioCompra() {
         initComponents();
     }
-    
+
     public TelaRelatorioCompra(int idVenda) {
         initComponents();
-                
+
         atualizarTabelaVendas(idVenda);
+        atualizaPrecoTotal();
     }
 
     /**
@@ -41,40 +39,43 @@ public class TelaRelatorioCompra extends JDialog {
     private void initComponents() {
 
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        lblNome = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        lblCPF = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        lblDtVenda = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblCompras = new javax.swing.JTable();
+        jLabel4 = new javax.swing.JLabel();
+        fieldTotal = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel3.setText("Cliente:");
 
-        jLabel4.setText("kaike");
+        lblNome.setText("kaike");
 
         jLabel1.setText("CPF:");
 
-        jLabel6.setText("123.123.123-23");
+        lblCPF.setText("123.123.123-23");
 
         jLabel2.setText("Data Compra:");
 
-        jLabel5.setText("10/04/2005");
+        lblDtVenda.setText("10/04/2005");
 
         tblCompras.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "NomeProduto", "Quantidade", "Valor"
             }
         ));
         jScrollPane1.setViewportView(tblCompras);
+
+        jLabel4.setText("Total:");
+
+        fieldTotal.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -87,15 +88,19 @@ public class TelaRelatorioCompra extends JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(58, 58, 58)
-                        .addComponent(jLabel4))
+                        .addComponent(lblNome))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel1))
                         .addGap(25, 25, 25)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel5))))
+                            .addComponent(lblCPF)
+                            .addComponent(lblDtVenda)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fieldTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -104,21 +109,26 @@ public class TelaRelatorioCompra extends JDialog {
                 .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel4))
+                    .addComponent(lblNome))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel6))
+                    .addComponent(lblCPF))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jLabel5))
+                    .addComponent(lblDtVenda))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(fieldTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     /**
@@ -155,44 +165,57 @@ public class TelaRelatorioCompra extends JDialog {
             }
         });
     }
-    
-    
-    public void abrirRelatorioProduto(){
-        VendaDAO dao = new VendaDAO();
-          
-    }
-    
+
     public void atualizarTabelaVendas(int idVenda) {
         SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
         try {
-            // Chama a DAO para listar os PCs
-            VendaDescricao retorno = VendaDAO.buscarPorVenda(idVenda); // Filtrando produtos pelo nome;
+            ArrayList<VendaDescricao> lstRetorno = VendaDAO.buscarPorVenda(idVenda);
             DefaultTableModel modelo = (DefaultTableModel) tblCompras.getModel();
 
-            // Limpa as linhas da tabela
             modelo.setRowCount(0);
 
             // Para cada item na lista de retorno, adiciono uma linha à tabela
+            for (VendaDescricao item : lstRetorno) {
                 modelo.addRow(new String[]{
-                    String.valueOf(retorno.getProduto().getNomeProduto()),
-                    String.valueOf(retorno.getProduto().getQtdProduto()),
-                    String.valueOf(retorno.getProduto().getPrecoProduto())
+                    String.valueOf(item.getProduto().getNomeProduto()),
+                    String.valueOf(item.getProduto().getQtdProduto()),
+                    String.valueOf(item.getVenda().getValorVenda())
                 });
-            
-            
-        } catch (Exception ex) {
+
+                String data = formatoData.format(item.getVenda().getDtVenda());
+                lblCPF.setText(item.getVenda().getCliente().getCpfCliente());
+                lblNome.setText(item.getVenda().getCliente().getNomeCliente());
+                lblDtVenda.setText(data);
+            }
+
+        } catch (ParseException ex) {
             JOptionPane.showMessageDialog(this, ex, "ERRO", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    private void atualizaPrecoTotal() {
+        DefaultTableModel cartTableModel = (DefaultTableModel) tblCompras.getModel();
+        double precoTotal = 0.0;
+
+        // passando sobre as linhas do modelo de tabela do carrinho
+        for (int i = 0; i < cartTableModel.getRowCount(); i++) {
+            double precoTotalProduto = Double.parseDouble(cartTableModel.getValueAt(i, 2).toString());
+            precoTotal += precoTotalProduto;
+        }
+
+        fieldTotal.setText(String.format("%.2f", precoTotal));
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField fieldTotal;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblCPF;
+    private javax.swing.JLabel lblDtVenda;
+    private javax.swing.JLabel lblNome;
     private javax.swing.JTable tblCompras;
     // End of variables declaration//GEN-END:variables
 }

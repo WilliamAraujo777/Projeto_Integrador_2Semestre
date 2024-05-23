@@ -6,13 +6,10 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -416,20 +413,22 @@ public class CadastroCliente extends javax.swing.JFrame {
             
             cliente.setEndereco(endereco);
             
+            boolean funcionou = DAO.salvarCliente(cliente);
+            
+            if (funcionou == true) {
+                JOptionPane.showMessageDialog(fieldComplemento, "Cadastro Realizado com Sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(null, "Erro ao cadastrar cliente!");
+            }
+            
         } catch (ParseException ex) {
             JOptionPane.showMessageDialog(fieldComplemento, "Data de nascimento inválida");
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(fieldComplemento, "Prrencha todos os campos obrigatórios!");
+            JOptionPane.showMessageDialog(fieldComplemento, "Verifique se todos os campos obrigatorios estão preenchidos");
         }
 
-        boolean funcionou = DAO.salvarCliente(cliente);
 
-        if (funcionou == true) {
-            JOptionPane.showMessageDialog(fieldComplemento, "Cadastro Realizado com Sucesso!");
-        } else {
-            JOptionPane.showMessageDialog(null, "Erro ao cadastrar cliente!");
-
-        }
+        
 
         //this.dispose();
 

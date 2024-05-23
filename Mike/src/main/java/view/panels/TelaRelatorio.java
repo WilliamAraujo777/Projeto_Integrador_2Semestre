@@ -2,17 +2,28 @@ package view.panels;
 
 import DAO.ProdutoDAO;
 import DAO.VendaDAO;
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import model.beans.Produto;
 import model.beans.Venda;
+import util.Validador;
 
 public class TelaRelatorio extends javax.swing.JPanel {
-
+    
+    Validador valida = new Validador();
+    
     public TelaRelatorio() {
         initComponents();
         atualizarTabelaVendas();
@@ -24,7 +35,7 @@ public class TelaRelatorio extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) { // Verifica se o clique é duplo
                     // Abre a tela de relatório com os produtos da compra
-                    TelaRelatorioCompra telaCadastro = new TelaRelatorioCompra(1);
+                    TelaRelatorioCompra telaCadastro = new TelaRelatorioCompra(2);
                     telaCadastro.setVisible(true);
                 }
             }
@@ -41,31 +52,23 @@ public class TelaRelatorio extends javax.swing.JPanel {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        fieldDataInicio = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        fieldDataFim = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         btnPesquisar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblVendas = new javax.swing.JTable();
+        fieldDtInicio = new javax.swing.JFormattedTextField();
+        fieldDtFim = new javax.swing.JFormattedTextField();
 
-        fieldDataInicio.setText(" ");
-        fieldDataInicio.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fieldDataInicioActionPerformed(evt);
-            }
-        });
+        jPanel1.setLayout(null);
 
         jLabel1.setText("Data Inicial:");
-
-        fieldDataFim.setText(" ");
-        fieldDataFim.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fieldDataFimActionPerformed(evt);
-            }
-        });
+        jPanel1.add(jLabel1);
+        jLabel1.setBounds(6, 6, 93, 16);
 
         jLabel2.setText("Data final:");
+        jPanel1.add(jLabel2);
+        jLabel2.setBounds(105, 6, 80, 16);
 
         btnPesquisar.setText("Pesquisar");
         btnPesquisar.addActionListener(new java.awt.event.ActionListener() {
@@ -73,6 +76,8 @@ public class TelaRelatorio extends javax.swing.JPanel {
                 btnPesquisarActionPerformed(evt);
             }
         });
+        jPanel1.add(btnPesquisar);
+        btnPesquisar.setBounds(640, 20, 137, 23);
 
         tblVendas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -92,48 +97,24 @@ public class TelaRelatorio extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(tblVendas);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(fieldDataInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(fieldDataFim, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnPesquisar))))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 776, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(fieldDataFim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnPesquisar)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(fieldDataInicio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        jPanel1.add(jScrollPane1);
+        jScrollPane1.setBounds(6, 57, 776, 425);
+
+        try {
+            fieldDtInicio.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        jPanel1.add(fieldDtInicio);
+        fieldDtInicio.setBounds(6, 28, 90, 22);
+
+        try {
+            fieldDtFim.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        jPanel1.add(fieldDtFim);
+        fieldDtFim.setBounds(105, 28, 90, 22);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -153,16 +134,8 @@ public class TelaRelatorio extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void fieldDataInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldDataInicioActionPerformed
-
-    }//GEN-LAST:event_fieldDataInicioActionPerformed
-
-    private void fieldDataFimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldDataFimActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_fieldDataFimActionPerformed
-
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
-    
+        PesquisaVendas();
     }//GEN-LAST:event_btnPesquisarActionPerformed
     
     public void atualizarTabelaVendas() {
@@ -189,11 +162,54 @@ public class TelaRelatorio extends javax.swing.JPanel {
         }
     }
     
+    private boolean PesquisaVendas(){
+        try {
+            fieldDtInicio.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
+            fieldDtFim.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
+            fieldDtInicio = (JFormattedTextField) valida.validaTextField(fieldDtInicio);
+            fieldDtFim = (JFormattedTextField) valida.validaTextField(fieldDtFim);
+            
+            if(valida.isDateFimMenorQueInicio(fieldDtInicio,fieldDtFim)){
+                JOptionPane.showMessageDialog(this, "Por favor, insira uma data final maior que a data de inicio");
+                return false;
+            }
+            
+            
+            
+            return true;
+        } catch (ParseException e) {
+            JOptionPane.showMessageDialog(this, e); 
+            return false;
+           
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Preencha todas as datas para consulta");
+            return false;
+        }
+        
+    }
+    
+    private void apenasNumeros(JTextField input) {
+
+        input.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent evt) {
+                String value = input.getText();
+                int l = value.length();
+                if (evt.getKeyChar() >= '0' && evt.getKeyChar() <= '9') {
+                    input.setEditable(true);
+                } else {
+                    input.setEditable(false);
+                }
+            }
+        });
+
+    }
+    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnPesquisar;
-    private javax.swing.JTextField fieldDataFim;
-    private javax.swing.JTextField fieldDataInicio;
+    private javax.swing.JFormattedTextField fieldDtFim;
+    private javax.swing.JFormattedTextField fieldDtInicio;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
