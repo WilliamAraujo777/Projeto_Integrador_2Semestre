@@ -13,13 +13,14 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.beans.Categoria;
+import model.beans.Endereco;
 import model.beans.Produto;
 
 /**
  *
  * @author Pichau
  */
-public class ProdutoDAO {
+public class EnderecoDAO {
 
     static String url = "jdbc:sqlite:C:/sqlite/mike";
 
@@ -29,7 +30,7 @@ public class ProdutoDAO {
      * @param obj
      * @return
      */
-    public static boolean salvarProduto(Produto obj) {
+    public static void salvarEndereco(Endereco obj, String cpf) throws ClassNotFoundException, SQLException {
         boolean retorno = false;
         Connection conexao = null;
 
@@ -41,27 +42,27 @@ public class ProdutoDAO {
             conexao = (Connection) DriverManager.getConnection(url);
 
             //preparando query para o banco de dados
-            PreparedStatement sql = conexao.prepareStatement("INSERT INTO produto (nomeProduto, precoProduto, qtdProduto, idCategoria) values(?,?,?,?);");
+            PreparedStatement sql = conexao.prepareStatement("INSERT INTO endereco(logradouro,CEP,bairro,cidade,estado,numero,complemento,cpfCliente) VALUES(?,?,?,?,?,?,?,?)");
 
             // Parametros da query 
-            sql.setString(1, obj.getNomeProduto());
-            sql.setDouble(2, obj.getPrecoProduto());
-            sql.setInt(3, obj.getQtdProduto());
-            sql.setInt(4, obj.getCategoria().getidCategoria());
+            sql.setString(1, obj.getLogradouro());
+            sql.setString(2, obj.getCep());
+            sql.setString(3, obj.getBairro());
+            sql.setString(4, obj.getCidade());
+            sql.setString(5, obj.getEstado());
+            sql.setString(6, obj.getNumero());
+            sql.setString(7, obj.getComplemento());
+            sql.setString(8, cpf);
+            
             //executa comando sql
-            int linhasAfetadas = sql.executeUpdate();
+            sql.executeUpdate();
 
-            if (linhasAfetadas > 0) {
-                retorno = true;
-            }
-
+          
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ClassNotFoundException("Erro, contate o adminstrador!");
         } catch (SQLException ex) {
-            Logger.getLogger(ClienteDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new SQLException("Erro de SQL, contate o adminstrador!\n"+ex);
         }
-
-        return retorno;
     }
 
     /**

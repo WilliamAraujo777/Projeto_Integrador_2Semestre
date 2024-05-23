@@ -24,7 +24,7 @@ public class TelaRelatorio extends javax.swing.JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) { // Verifica se o clique é duplo
                     // Abre a tela de relatório com os produtos da compra
-                    TelaRelatorioCompra telaCadastro = new TelaRelatorioCompra();
+                    TelaRelatorioCompra telaCadastro = new TelaRelatorioCompra(1);
                     telaCadastro.setVisible(true);
                 }
             }
@@ -83,7 +83,7 @@ public class TelaRelatorio extends javax.swing.JPanel {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, false, false, false
+                false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -188,6 +188,7 @@ public class TelaRelatorio extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, ex, "ERRO", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnPesquisar;

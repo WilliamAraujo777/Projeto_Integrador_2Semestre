@@ -67,7 +67,7 @@ public class TelaClientes extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID", "Nome", "CPF", "Endereço"
+                "ID", "Nome", "CPF", "Endereço", "null", "Title 6", "Title 7", "Title 8", "Title 9"
             }
         ));
         jTable3.setColumnSelectionAllowed(true);

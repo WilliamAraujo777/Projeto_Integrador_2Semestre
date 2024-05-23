@@ -17,6 +17,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import model.beans.Cliente;
+import model.beans.Endereco;
 import util.Validador;
 
 public class CadastroCliente extends javax.swing.JFrame {
@@ -43,15 +44,13 @@ public class CadastroCliente extends javax.swing.JFrame {
         labelContato = new javax.swing.JLabel();
         labelEmail = new javax.swing.JLabel();
         fieldEmail = new javax.swing.JTextField();
-        cbEstadoCivil = new javax.swing.JComboBox<>();
         cbSexo = new javax.swing.JComboBox<>();
-        labelRG2 = new javax.swing.JLabel();
         fieldNascimento = new javax.swing.JFormattedTextField();
         fieldCPF = new javax.swing.JFormattedTextField();
         fieldContato = new javax.swing.JFormattedTextField();
         panelEndereco = new javax.swing.JPanel();
         labelNome1 = new javax.swing.JLabel();
-        fieldRua = new javax.swing.JTextField();
+        fieldLogradouro = new javax.swing.JTextField();
         labelCEP = new javax.swing.JLabel();
         labelRG1 = new javax.swing.JLabel();
         fieldBairro = new javax.swing.JTextField();
@@ -60,7 +59,7 @@ public class CadastroCliente extends javax.swing.JFrame {
         labelContato1 = new javax.swing.JLabel();
         fieldCidade = new javax.swing.JTextField();
         labelEmail1 = new javax.swing.JLabel();
-        jComboBox3 = new javax.swing.JComboBox<>();
+        cbEstado = new javax.swing.JComboBox<>();
         labelContato2 = new javax.swing.JLabel();
         fieldComplemento = new javax.swing.JTextField();
         fieldCEP = new javax.swing.JFormattedTextField();
@@ -88,7 +87,7 @@ public class CadastroCliente extends javax.swing.JFrame {
         );
 
         panelCliente.setBackground(new java.awt.Color(255, 255, 255));
-        panelCliente.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados pessoais"));
+        panelCliente.setBorder(javax.swing.BorderFactory.createTitledBorder("Dados Pessoais\n"));
 
         labelNome.setText("Nome");
 
@@ -108,16 +107,12 @@ public class CadastroCliente extends javax.swing.JFrame {
             }
         });
 
-        cbEstadoCivil.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Solteiro(a)", "Casado(a)", "Viúvo(a)", "União estável" }));
-
         cbSexo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "M", "F" }));
         cbSexo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbSexoActionPerformed(evt);
             }
         });
-
-        labelRG2.setText("Estado civíl");
 
         try {
             fieldNascimento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
@@ -163,7 +158,7 @@ public class CadastroCliente extends javax.swing.JFrame {
                         .addGroup(panelClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panelClienteLayout.createSequentialGroup()
                                 .addComponent(labelNascimento)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 144, Short.MAX_VALUE))
                             .addGroup(panelClienteLayout.createSequentialGroup()
                                 .addComponent(fieldNascimento)
                                 .addGap(6, 6, 6)))
@@ -173,15 +168,9 @@ public class CadastroCliente extends javax.swing.JFrame {
                                 .addGap(81, 81, 81))
                             .addComponent(fieldContato)))
                     .addGroup(panelClienteLayout.createSequentialGroup()
-                        .addGroup(panelClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fieldEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(labelEmail))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelClienteLayout.createSequentialGroup()
-                                .addComponent(labelRG2)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(cbEstadoCivil, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(labelEmail)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(fieldEmail))
                 .addContainerGap())
         );
         panelClienteLayout.setVerticalGroup(
@@ -208,20 +197,16 @@ public class CadastroCliente extends javax.swing.JFrame {
                     .addComponent(fieldNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fieldContato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelEmail)
-                    .addComponent(labelRG2))
+                .addComponent(labelEmail)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(fieldEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbEstadoCivil, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(fieldEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panelEndereco.setBackground(new java.awt.Color(255, 255, 255));
-        panelEndereco.setBorder(javax.swing.BorderFactory.createTitledBorder("Endereço"));
+        panelEndereco.setBorder(javax.swing.BorderFactory.createTitledBorder("Endereco"));
 
-        labelNome1.setText("Rua");
+        labelNome1.setText("Logradouro");
 
         labelCEP.setText("CEP");
 
@@ -233,7 +218,7 @@ public class CadastroCliente extends javax.swing.JFrame {
 
         labelEmail1.setText("UF");
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Acre", "Alagoas", "Amapá", "Amazonas", "Bahia", "Ceará", "Distrito Federal", "Espírito Santo", "Goiás", "Maranhão", "Mato Grosso", "Mato Grosso do Sul", "Minas Gerais", "Pará", "Paraíba", "Paraná", "Pernambuco", "Piauí", "Rio de Janeiro", "Rio Grande do Norte", "Rio Grande do Sul", "Rondônia", "Roraima", "Santa Catarina", "São Paulo", "Sergipe", "Tocantins" }));
+        cbEstado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Acre", "Alagoas", "Amapá", "Amazonas", "Bahia", "Ceará", "Distrito Federal", "Espírito Santo", "Goiás", "Maranhão", "Mato Grosso", "Mato Grosso do Sul", "Minas Gerais", "Pará", "Paraíba", "Paraná", "Pernambuco", "Piauí", "Rio de Janeiro", "Rio Grande do Norte", "Rio Grande do Sul", "Rondônia", "Roraima", "Santa Catarina", "São Paulo", "Sergipe", "Tocantins" }));
 
         labelContato2.setText("Complemento");
 
@@ -260,11 +245,11 @@ public class CadastroCliente extends javax.swing.JFrame {
                         .addGroup(panelEnderecoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(labelRG1)
                             .addComponent(fieldBairro, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(fieldRua)
+                    .addComponent(fieldLogradouro)
                     .addGroup(panelEnderecoLayout.createSequentialGroup()
                         .addGroup(panelEnderecoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panelEnderecoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(jComboBox3, javax.swing.GroupLayout.Alignment.LEADING, 0, 185, Short.MAX_VALUE)
+                                .addComponent(cbEstado, javax.swing.GroupLayout.Alignment.LEADING, 0, 185, Short.MAX_VALUE)
                                 .addComponent(fieldNumero, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(labelNascimento1, javax.swing.GroupLayout.Alignment.LEADING))
                             .addComponent(labelEmail1))
@@ -293,7 +278,7 @@ public class CadastroCliente extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fieldComplemento, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelEnderecoLayout.createSequentialGroup()
-                        .addComponent(fieldRua, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(fieldLogradouro, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(panelEnderecoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(labelCEP)
@@ -313,7 +298,7 @@ public class CadastroCliente extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(labelEmail1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -387,7 +372,7 @@ public class CadastroCliente extends javax.swing.JFrame {
         fieldNascimento.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
         fieldContato.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
         fieldEmail.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
-        fieldRua.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
+        fieldLogradouro.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
         fieldBairro.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
         fieldCidade.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
         fieldCEP.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
@@ -395,6 +380,7 @@ public class CadastroCliente extends javax.swing.JFrame {
         fieldComplemento.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
 
         Cliente cliente = new Cliente();
+        Endereco endereco = new Endereco();
         ClienteDAO DAO = new ClienteDAO();
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -406,20 +392,30 @@ public class CadastroCliente extends javax.swing.JFrame {
             fieldNascimento = (JFormattedTextField) valida.validaTextField(fieldNascimento);
             fieldContato = (JFormattedTextField) valida.validaTextField(fieldContato);
             fieldEmail = (JTextField) valida.validaTextField(fieldEmail);
-//            fieldRua = (JTextField) valida.validaTextField(fieldRua);
-//            fieldCEP = (JFormattedTextField) valida.validaTextField(fieldCEP);
-//            fieldBairro = (JTextField) valida.validaTextField(fieldBairro);
-//            fieldNumero = (JTextField) valida.validaTextField(fieldNumero);
-//            fieldCidade = (JTextField) valida.validaTextField(fieldCidade);
-//            fieldComplemento = (JTextField) valida.validaTextField(fieldComplemento);
+            fieldLogradouro = (JTextField) valida.validaTextField(fieldLogradouro);
+            fieldCEP = (JFormattedTextField) valida.validaTextField(fieldCEP);
+            fieldBairro = (JTextField) valida.validaTextField(fieldBairro);
+            fieldNumero = (JTextField) valida.validaTextField(fieldNumero);
+            fieldCidade = (JTextField) valida.validaTextField(fieldCidade);
+            fieldComplemento = (JTextField) valida.validaTextField(fieldComplemento);
 
             cliente.setNomeCliente(fieldNome.getText());
             cliente.setCpfCliente(fieldCPF.getText().replace("-", ""));
             cliente.setEmailCliente(fieldEmail.getText());
             cliente.setNumeroCliente(fieldContato.getText().replaceAll("[()-]", ""));
             cliente.setSexoCliente(cbSexo.getSelectedItem().toString().charAt(0));
-
             cliente.setDtNascimento(formatter.parse(fieldNascimento.getText().replace("/", "-")));
+            
+            endereco.setLogradouro(fieldLogradouro.getText());
+            endereco.setCep(fieldCEP.getText().replace("-",""));
+            endereco.setBairro(fieldBairro.getText());
+            endereco.setNumero(fieldNumero.getText());
+            endereco.setCidade(fieldCidade.getText());
+            endereco.setEstado(cbEstado.getSelectedItem().toString());
+            endereco.setComplemento(fieldComplemento.getText());
+            
+            cliente.setEndereco(endereco);
+            
         } catch (ParseException ex) {
             JOptionPane.showMessageDialog(fieldComplemento, "Data de nascimento inválida");
         } catch (Exception ex) {
@@ -435,7 +431,7 @@ public class CadastroCliente extends javax.swing.JFrame {
 
         }
 
-        this.dispose();
+        //this.dispose();
 
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
@@ -532,7 +528,7 @@ public class CadastroCliente extends javax.swing.JFrame {
     private javax.swing.JButton btnAdicionar;
     private javax.swing.JButton btnLimpar;
     private javax.swing.JButton btnVoltar;
-    private javax.swing.JComboBox<String> cbEstadoCivil;
+    private javax.swing.JComboBox<String> cbEstado;
     private javax.swing.JComboBox<String> cbSexo;
     private javax.swing.JTextField fieldBairro;
     private javax.swing.JFormattedTextField fieldCEP;
@@ -541,11 +537,10 @@ public class CadastroCliente extends javax.swing.JFrame {
     private javax.swing.JTextField fieldComplemento;
     private javax.swing.JFormattedTextField fieldContato;
     private javax.swing.JTextField fieldEmail;
+    private javax.swing.JTextField fieldLogradouro;
     private javax.swing.JFormattedTextField fieldNascimento;
     private javax.swing.JTextField fieldNome;
     private javax.swing.JTextField fieldNumero;
-    private javax.swing.JTextField fieldRua;
-    private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JLabel labelCEP;
     private javax.swing.JLabel labelCPF;
     private javax.swing.JLabel labelContato;
@@ -559,7 +554,6 @@ public class CadastroCliente extends javax.swing.JFrame {
     private javax.swing.JLabel labelNome1;
     private javax.swing.JLabel labelRG;
     private javax.swing.JLabel labelRG1;
-    private javax.swing.JLabel labelRG2;
     private javax.swing.JPanel panelCliente;
     private javax.swing.JPanel panelEndereco;
     private javax.swing.JPanel panelGap;

@@ -7,19 +7,20 @@ public class Produto {
     private double precoProduto;
     private int qtdProduto;
     private int idCategoria;
+    Categoria categoria = new Categoria();
 
     public Produto(int idProduto, double precoProduto, int qtdProduto) {
         this.idProduto = idProduto;
         this.precoProduto = precoProduto;
         this.qtdProduto = qtdProduto;
     }
-
-    public Produto(int idProduto, String nomeProduto, double precoProduto, int qtdProduto, int idCategoria) {
+    
+    public Produto(int idProduto, String nomeProduto, double precoProduto, int qtdProduto, Categoria categoria) {
         this.idProduto = idProduto;
         this.nomeProduto = nomeProduto;
         this.precoProduto = precoProduto;
         this.qtdProduto = qtdProduto;
-        this.idCategoria = idCategoria;
+        this.categoria = categoria;
     }
 
     public Produto(int idProduto, int qtdProduto) {
@@ -27,11 +28,11 @@ public class Produto {
         this.qtdProduto = qtdProduto;
     }
 
-    public Produto(String nomeProduto, double precoProduto, int qtdProduto, int idCategoria) {
+    public Produto(String nomeProduto, double precoProduto, int qtdProduto, Categoria categoria) {
         this.nomeProduto = nomeProduto;
         this.precoProduto = precoProduto;
         this.qtdProduto = qtdProduto;
-        this.idCategoria = idCategoria;
+        this.categoria = categoria;
     }
 
     public Produto() {
@@ -67,6 +68,14 @@ public class Produto {
 
     public void setQtdProduto(int qtdProduto) {
         this.qtdProduto = qtdProduto;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 
     public int getIdCategoria() {

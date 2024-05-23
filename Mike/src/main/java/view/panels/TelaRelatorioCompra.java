@@ -4,17 +4,31 @@
  */
 package view.panels;
 
+import DAO.ProdutoDAO;
+import DAO.VendaDAO;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import model.beans.*;
+
 /**
  *
  * @author Pichau
  */
-public class TelaRelatorioCompra extends javax.swing.JFrame {
-
+public class TelaRelatorioCompra extends JDialog {
     /**
      * Creates new form TelaRelatorioCompra
      */
     public TelaRelatorioCompra() {
         initComponents();
+    }
+    
+    public TelaRelatorioCompra(int idVenda) {
+        initComponents();
+                
+        atualizarTabelaVendas(idVenda);
     }
 
     /**
@@ -33,7 +47,7 @@ public class TelaRelatorioCompra extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblCompras = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -49,18 +63,18 @@ public class TelaRelatorioCompra extends javax.swing.JFrame {
 
         jLabel5.setText("10/04/2005");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblCompras.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "NomeProduto", "Quantidade", "Valor"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblCompras);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -141,6 +155,35 @@ public class TelaRelatorioCompra extends javax.swing.JFrame {
             }
         });
     }
+    
+    
+    public void abrirRelatorioProduto(){
+        VendaDAO dao = new VendaDAO();
+          
+    }
+    
+    public void atualizarTabelaVendas(int idVenda) {
+        SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            // Chama a DAO para listar os PCs
+            VendaDescricao retorno = VendaDAO.buscarPorVenda(idVenda); // Filtrando produtos pelo nome;
+            DefaultTableModel modelo = (DefaultTableModel) tblCompras.getModel();
+
+            // Limpa as linhas da tabela
+            modelo.setRowCount(0);
+
+            // Para cada item na lista de retorno, adiciono uma linha à tabela
+                modelo.addRow(new String[]{
+                    String.valueOf(retorno.getProduto().getNomeProduto()),
+                    String.valueOf(retorno.getProduto().getQtdProduto()),
+                    String.valueOf(retorno.getProduto().getPrecoProduto())
+                });
+            
+            
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex, "ERRO", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -150,6 +193,6 @@ public class TelaRelatorioCompra extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tblCompras;
     // End of variables declaration//GEN-END:variables
 }

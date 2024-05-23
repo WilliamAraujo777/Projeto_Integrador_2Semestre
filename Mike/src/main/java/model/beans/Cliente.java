@@ -10,8 +10,25 @@ public class Cliente {
     private String emailCliente;
     private String numeroCliente;
     private Date dtNascimento;
+    Endereco endereco = new Endereco();
 
-  
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(Endereco endereco) {
+        this.endereco = endereco;
+    }
+    
+    public Cliente(String cpfCliente, String nomeCliente, char sexoCliente, String emailCliente, String numeroCliente, Date dtNascimento, Endereco endereco) {
+        this.cpfCliente = cpfCliente;
+        this.nomeCliente = nomeCliente;
+        this.sexoCliente = sexoCliente;
+        this.emailCliente = emailCliente;
+        this.numeroCliente = numeroCliente;
+        this.dtNascimento = dtNascimento;
+        this.endereco = endereco;
+    }
 
     public Cliente(String cpfCliente, String nomeCliente, char sexoCliente, String emailCliente, String numeroCliente, Date dtNascimento) {
         this.cpfCliente = cpfCliente;

@@ -29,6 +29,7 @@ public class ClienteDAO {
     public static boolean salvarCliente(Cliente obj) {
         boolean retorno = false;
         Connection conexao = null;
+        EnderecoDAO dao = new EnderecoDAO();
 
         try {
             java.util.Date utilDate = obj.getDtNascimento();
@@ -52,7 +53,11 @@ public class ClienteDAO {
 
             //executa comando sql
             int linhasAfetadas = sql.executeUpdate();
-
+            
+            
+            dao.salvarEndereco(obj.getEndereco(), obj.getCpfCliente());
+            
+            
             if (linhasAfetadas > 0) {
                 retorno = true;
             }

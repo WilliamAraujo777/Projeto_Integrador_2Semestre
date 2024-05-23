@@ -5,6 +5,15 @@ public class VendaDescricao {
 
     private Venda venda; 
     private List<Produto> listaProdutos;
+    Produto produto = new Produto();
+
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public void setProduto(Produto produto) {
+        this.produto = produto;
+    }
     
     public VendaDescricao() {
     
@@ -13,7 +22,12 @@ public class VendaDescricao {
         this.venda = venda;
         this.listaProdutos = listaProdutos;
     }
-
+    
+    public VendaDescricao(Venda venda, Produto produto) {
+        this.venda = venda;
+        this.produto = produto;
+    }
+    
     public Venda getVenda() {
         return venda;
     }

@@ -10,6 +10,7 @@ import java.awt.Cursor;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import model.beans.Categoria;
 import model.beans.Produto;
 import view.CadastroProduto;
 import view.TelaPrincipal;
@@ -25,7 +26,7 @@ public class TelaProdutos extends javax.swing.JPanel {
      */
     public TelaProdutos() {
         initComponents();
-
+         atualizarTabela();
     }
 
     /**
@@ -158,17 +159,22 @@ public class TelaProdutos extends javax.swing.JPanel {
 
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
         int linhaSelecionada = tblProdutos.getSelectedRow(); // Recebendo a linha selecionada
-
+        Categoria categoria = new Categoria();
+        
         // Recebendo dados da linha selecionada
         if (linhaSelecionada >= 0) {
             DefaultTableModel modelo = (DefaultTableModel) tblProdutos.getModel();
             int idProd = Integer.parseInt(modelo.getValueAt(linhaSelecionada, 0).toString());
-            String nomeProd = (modelo.getValueAt(linhaSelecionada, 1).toString());;
+            String nomeProd = (modelo.getValueAt(linhaSelecionada, 1).toString());
             double precProd = (Double.parseDouble(modelo.getValueAt(linhaSelecionada, 2).toString()));
             int qtdProd = (Integer.parseInt(modelo.getValueAt(linhaSelecionada, 3).toString()));
-            int idCat = (Integer.parseInt(modelo.getValueAt(linhaSelecionada, 4).toString()));
+            
+          
+            String nomeCategoria = (modelo.getValueAt(linhaSelecionada, 4).toString());
+            
+            categoria.setnomeCategoria(nomeCategoria);
 
-            Produto alterarProduto = new Produto(idProd, nomeProd, precProd, qtdProd, idCat); // Passando os dados para o construtor que os modifica
+            Produto alterarProduto = new Produto(idProd, nomeProd, precProd, qtdProd, categoria); // Passando os dados para o construtor que os modifica
             CadastroProduto cadastro = new CadastroProduto(alterarProduto); // Chama a tela de cadastro no modo de alteração
             cadastro.setVisible(true);
         } else {
@@ -213,7 +219,7 @@ public class TelaProdutos extends javax.swing.JPanel {
                 String.valueOf(item.getNomeProduto()),
                 String.valueOf(item.getPrecoProduto()),
                 String.valueOf(item.getQtdProduto()),
-                String.valueOf(item.getIdCategoria())
+                String.valueOf(item.getCategoria().getnomeCategoria())
             });
         }
     }

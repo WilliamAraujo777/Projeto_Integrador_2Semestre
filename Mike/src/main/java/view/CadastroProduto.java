@@ -7,6 +7,7 @@ package view;
 import DAO.ProdutoDAO;
 import java.awt.Color;
 import javax.swing.JOptionPane;
+import model.beans.Categoria;
 import model.beans.Produto;
 
 /**
@@ -33,7 +34,7 @@ public class CadastroProduto extends javax.swing.JFrame {
         txtNomeProd.setText(String.valueOf(alterarProduto.getNomeProduto()));
         txtPrecProd.setText(String.valueOf(alterarProduto.getPrecoProduto()));
         txtQtdProd.setText(String.valueOf(alterarProduto.getQtdProduto()));
-        cbCatProd.setSelectedIndex(alterarProduto.getIdCategoria() - 1);
+        cbCatProd.setSelectedItem(alterarProduto.getCategoria().getnomeCategoria());
 
         btnSalvar.setText("Editar");
     }
@@ -160,7 +161,8 @@ public class CadastroProduto extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        // Verifica se está inserindo ou alterando
+        
+// Verifica se está inserindo ou alterando
         if (alterarProduto == null) {
             // Resgata os dados inseridos pelo usuário
             String nomeProd = txtNomeProd.getText();
@@ -183,9 +185,13 @@ public class CadastroProduto extends javax.swing.JFrame {
             } else if (catProd.equalsIgnoreCase("bola")) {
                 idCat = 6;
             }
-
+            
+            
+            Categoria categoria = new Categoria(idCat, catProd);
+            
+            
             //Passar os dados para o objeto
-            Produto novoProduto = new Produto(nomeProd, precProd, qtdProd, idCat);
+            Produto novoProduto = new Produto(nomeProd, precProd, qtdProd, categoria);
 
             // Passando o objeto para o banco
             boolean retorno = ProdutoDAO.salvarProduto(novoProduto);
