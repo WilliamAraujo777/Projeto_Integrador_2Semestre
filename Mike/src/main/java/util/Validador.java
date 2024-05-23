@@ -37,7 +37,6 @@ public JTextComponent validaTextField(JTextComponent  input) throws Exception{
             Date dateInicio = dateFormat.parse(fieldDtInicio.getText());
             Date dateFim = dateFormat.parse(fieldDtFim.getText());
 
-            JOptionPane.showMessageDialog(null, dateInicio + " | "+dateFim);
             return dateFim.before(dateInicio);
         } catch (ParseException e) {
             throw new ParseException("Data inválida", 0);   

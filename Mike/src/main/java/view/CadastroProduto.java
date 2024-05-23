@@ -6,26 +6,34 @@ package view;
 
 import DAO.ProdutoDAO;
 import java.awt.Color;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import model.beans.Categoria;
 import model.beans.Produto;
+import view.panels.TelaProdutos;
 
 /**
  *
  * @author Vítor
  */
-public class CadastroProduto extends javax.swing.JFrame {
-
+public class CadastroProduto extends javax.swing.JDialog {
+    TelaProdutos telaProduto;
     Produto alterarProduto = null;
 
     /**
      * Creates new form CadastroProduto
+     * @param parent
+     * @param telaProduto
      */
-    public CadastroProduto() {
+    public CadastroProduto(JFrame parent, TelaProdutos telaProduto) {
+        super(parent, true);
         initComponents();
+        this.telaProduto = telaProduto;
     }
 
-    public CadastroProduto(Produto obj) {
+    public CadastroProduto(Produto obj,JFrame parent, TelaProdutos telaProduto) {
+        super(parent, true);
         initComponents();
         this.getContentPane().setBackground(new Color(255, 255, 255));
 
@@ -35,7 +43,7 @@ public class CadastroProduto extends javax.swing.JFrame {
         txtPrecProd.setText(String.valueOf(alterarProduto.getPrecoProduto()));
         txtQtdProd.setText(String.valueOf(alterarProduto.getQtdProduto()));
         cbCatProd.setSelectedItem(alterarProduto.getCategoria().getnomeCategoria());
-
+        this.telaProduto = telaProduto;
         btnSalvar.setText("Editar");
     }
 
@@ -198,9 +206,13 @@ public class CadastroProduto extends javax.swing.JFrame {
 
             if (retorno) {
                 JOptionPane.showMessageDialog(rootPane, "Sucesso!");
+                telaProduto.atualizarTabela();
+                this.dispose();
             } else {
                 JOptionPane.showMessageDialog(rootPane, "Falha!");
             }
+            
+            
         } else {
             // Modo de alteração
             String nomeProd = txtNomeProd.getText();
@@ -234,47 +246,13 @@ public class CadastroProduto extends javax.swing.JFrame {
 
             if (retorno) {
                 JOptionPane.showMessageDialog(rootPane, "Sucesso!");
+                telaProduto.atualizarTabela();
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(rootPane, "Falha!");
             }
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CadastroProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CadastroProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CadastroProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CadastroProduto.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CadastroProduto().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSalvar;

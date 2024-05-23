@@ -4,19 +4,18 @@
  */
 package DAO;
 
-import static DAO.ProdutoDAO.url;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import model.beans.Categoria;
 import model.beans.Cliente;
 import model.beans.Produto;
 import model.beans.Venda;
 import model.beans.VendaDescricao;
+import java.util.Date;
+import javax.swing.JOptionPane;
 
 public class VendaDAO {
 
@@ -109,7 +108,7 @@ public class VendaDAO {
         Produto produto;
         Cliente cliente;
 
-        Connection conexao = null;
+        Connection conexao;
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
         ArrayList<VendaDescricao> lstVenda = new ArrayList<>();
         
@@ -210,6 +209,52 @@ public class VendaDAO {
         } catch (ParseException ex) {
             throw new ParseException("Erro de SQL, contate o adminstrador!", 0);
         }
+        return lstVenda;
+    }
+    
+    public static ArrayList<Venda>buscarVendaData(java.util.Date dtInicio, java.util.Date dtFim) throws ParseException {
+        Connection conexao = null;
+        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+
+        java.util.Date dataInicio = new java.sql.Date(dtInicio.getTime());
+        java.util.Date dataFim = new java.sql.Date(dtFim.getTime());
+        ArrayList<Venda> lstVenda = new ArrayList<>();
+        Cliente cliente = new Cliente();
+        
+ 
+        try {
+            // Carregando o driver do SQLite
+            Class.forName("org.sqlite.JDBC");
+
+            // Conexão com o banco
+            conexao = DriverManager.getConnection(url);
+
+            // SELECT
+            PreparedStatement comandoSQL = conexao.prepareStatement("SELECT * FROM venda WHERE dtVenda between ? and ?");
+
+            comandoSQL.setString(1, dataInicio.toString());
+            comandoSQL.setString(2, dataFim.toString());
+            
+            // Executando o SELECT
+            ResultSet rs = comandoSQL.executeQuery();
+
+            while (rs.next()) {
+                int idVenda = rs.getInt("idVenda");
+                Double valor = rs.getDouble("valorVenda");
+                String data = rs.getString("dtVenda");
+                String cpfCliente = rs.getString("cpfCliente");
+
+                cliente.setCpfCliente(cpfCliente);
+                java.util.Date dataDate = formato.parse(data);
+
+                Venda item = new Venda(idVenda, valor, dataDate, cliente);
+
+                lstVenda.add(item);
+            }
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+
         return lstVenda;
     }
 

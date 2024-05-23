@@ -10,21 +10,53 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import model.beans.Cliente;
 import model.beans.Endereco;
 import util.Validador;
 
-public class CadastroCliente extends javax.swing.JFrame {
+public class CadastroCliente extends JDialog {
 
     private List<JTextField> camposDeEntrada;
 
-    public CadastroCliente() {
+    Cliente alterarCliente = null;
+//    Endereco alterarEndereco = null;
+
+    public CadastroCliente(JFrame parent) {
+        super(parent, true);
         initComponents();
         apenasNumeros(fieldNumero);
         this.getContentPane().setBackground(new Color(255, 255, 255));
+    }
+
+    public CadastroCliente(Cliente obj,JFrame parent) {
+        super(parent, true);
+        initComponents();
+        this.getContentPane().setBackground(new Color(255, 255, 255));
+
+        alterarCliente = obj;
+
+        fieldNome.setText(String.valueOf(alterarCliente.getNomeCliente()));
+        fieldCPF.setText(String.valueOf(alterarCliente.getCpfCliente()));
+        fieldCPF.setEditable(false);
+        cbSexo.setSelectedItem(alterarCliente.getSexoCliente());
+        fieldNascimento.setText(String.valueOf(alterarCliente.getDtNascimento()));
+        fieldNumero.setText(String.valueOf(alterarCliente.getNumeroCliente()));
+        fieldEmail.setText(String.valueOf(alterarCliente.getEmailCliente()));
+
+        fieldLogradouro.setText(String.valueOf(alterarCliente.getEndereco().getLogradouro()));
+        fieldCEP.setText(String.valueOf(alterarCliente.getEndereco().getCep()));
+        fieldBairro.setText(String.valueOf(alterarCliente.getEndereco().getBairro()));
+        fieldNumero.setText(String.valueOf(alterarCliente.getEndereco().getNumero()));
+        fieldCidade.setText(String.valueOf(alterarCliente.getEndereco().getCidade()));
+        cbEstado.setSelectedItem(alterarCliente.getEndereco().getComplemento());
+        fieldComplemento.setText(String.valueOf(alterarCliente.getEndereco().getComplemento()));
+
+        btnAdicionar.setText("Editar");
     }
 
     @SuppressWarnings("unchecked")
@@ -105,11 +137,6 @@ public class CadastroCliente extends javax.swing.JFrame {
         });
 
         cbSexo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "M", "F" }));
-        cbSexo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbSexoActionPerformed(evt);
-            }
-        });
 
         try {
             fieldNascimento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
@@ -383,6 +410,7 @@ public class CadastroCliente extends javax.swing.JFrame {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
         Validador valida = new Validador();
+
         try {
             fieldNome = (JTextField) valida.validaTextField(fieldNome);
             fieldCPF = (JFormattedTextField) valida.validaTextField(fieldCPF);
@@ -402,36 +430,32 @@ public class CadastroCliente extends javax.swing.JFrame {
             cliente.setNumeroCliente(fieldContato.getText().replaceAll("[()-]", ""));
             cliente.setSexoCliente(cbSexo.getSelectedItem().toString().charAt(0));
             cliente.setDtNascimento(formatter.parse(fieldNascimento.getText().replace("/", "-")));
-            
+
             endereco.setLogradouro(fieldLogradouro.getText());
-            endereco.setCep(fieldCEP.getText().replace("-",""));
+            endereco.setCep(fieldCEP.getText().replace("-", ""));
             endereco.setBairro(fieldBairro.getText());
             endereco.setNumero(fieldNumero.getText());
             endereco.setCidade(fieldCidade.getText());
             endereco.setEstado(cbEstado.getSelectedItem().toString());
             endereco.setComplemento(fieldComplemento.getText());
-            
+
             cliente.setEndereco(endereco);
-            
+
             boolean funcionou = DAO.salvarCliente(cliente);
-            
+
             if (funcionou == true) {
                 JOptionPane.showMessageDialog(fieldComplemento, "Cadastro Realizado com Sucesso!");
             } else {
                 JOptionPane.showMessageDialog(null, "Erro ao cadastrar cliente!");
+
             }
-            
         } catch (ParseException ex) {
             JOptionPane.showMessageDialog(fieldComplemento, "Data de nascimento inválida");
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(fieldComplemento, "Verifique se todos os campos obrigatorios estão preenchidos");
+            JOptionPane.showMessageDialog(fieldComplemento, "Prrencha todos os campos obrigatórios!");
         }
 
-
-        
-
-        //this.dispose();
-
+        this.dispose();
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
@@ -444,10 +468,6 @@ public class CadastroCliente extends javax.swing.JFrame {
         obterCamposDeEntradaDoContainer(panelCliente);
         limparCamposDeTexto();
     }//GEN-LAST:event_btnLimparActionPerformed
-
-    private void cbSexoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbSexoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbSexoActionPerformed
 
     private void apenasNumeros(JTextField input) {
 
@@ -485,42 +505,6 @@ public class CadastroCliente extends javax.swing.JFrame {
         for (JTextField campo : camposDeEntrada) {
             campo.setText(""); // Limpa o texto do campo
         }
-    }
-
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CadastroCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CadastroCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CadastroCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CadastroCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-
-                new CadastroCliente().setVisible(true);
-
-            }
-        });
-
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

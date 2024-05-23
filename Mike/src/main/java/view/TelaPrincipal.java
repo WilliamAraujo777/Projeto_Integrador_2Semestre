@@ -346,7 +346,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private TelaProdutos getProdutosPanel() {
         if (pnlProdutos == null) {
-            pnlProdutos = new TelaProdutos();
+            pnlProdutos = new TelaProdutos(this);
             pnlProdutos.setName("produtos");
         }
 
@@ -355,7 +355,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private TelaClientes getClientesPanel() {
         if (pnlClientes == null) {
-            pnlClientes = new TelaClientes();
+            pnlClientes = new TelaClientes(this);
             pnlClientes.setName("clientes");
         }
 
@@ -364,7 +364,7 @@ public class TelaPrincipal extends javax.swing.JFrame {
 
     private TelaRelatorio getRelatorioPanel() {
         if (pnlRelatorios == null) {
-            pnlRelatorios = new TelaRelatorio();
+            pnlRelatorios = new TelaRelatorio(this);
             pnlRelatorios.setName("relatorios");
         }
 

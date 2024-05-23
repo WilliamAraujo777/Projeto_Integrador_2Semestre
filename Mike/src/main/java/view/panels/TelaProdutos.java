@@ -8,6 +8,7 @@ import DAO.ProdutoDAO;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.util.ArrayList;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.beans.Categoria;
@@ -24,9 +25,15 @@ public class TelaProdutos extends javax.swing.JPanel {
     /**
      * Creates new form Produtos
      */
-    public TelaProdutos() {
+    JFrame parent;
+    public TelaProdutos(JFrame parent) {
         initComponents();
          atualizarTabela();
+         this.parent = parent;
+    }
+    
+    public TelaProdutos() {
+    
     }
 
     /**
@@ -152,8 +159,10 @@ public class TelaProdutos extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnListarActionPerformed
 
+ 
+
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
-        CadastroProduto cadastro = new CadastroProduto();
+        CadastroProduto cadastro = new CadastroProduto(parent, this);
         cadastro.setVisible(true);
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
@@ -175,7 +184,7 @@ public class TelaProdutos extends javax.swing.JPanel {
             categoria.setnomeCategoria(nomeCategoria);
 
             Produto alterarProduto = new Produto(idProd, nomeProd, precProd, qtdProd, categoria); // Passando os dados para o construtor que os modifica
-            CadastroProduto cadastro = new CadastroProduto(alterarProduto); // Chama a tela de cadastro no modo de alteração
+            CadastroProduto cadastro = new CadastroProduto(alterarProduto, this.parent, this); // Chama a tela de cadastro no modo de alteração
             cadastro.setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "Selecione uma linha!");
@@ -193,7 +202,8 @@ public class TelaProdutos extends javax.swing.JPanel {
             //Chamar a DAO para excluir
             boolean retorno = ProdutoDAO.excluir(idExcluir);
             if (retorno) {
-                JOptionPane.showMessageDialog(this, "Sucesso!");
+                JOptionPane.showMessageDialog(this, "Produto Excluido");
+                atualizarTabela();
             } else {
                 JOptionPane.showMessageDialog(this, "Falha!");
             }

@@ -1,42 +1,50 @@
 package view.panels;
 
-import DAO.ProdutoDAO;
 import DAO.VendaDAO;
 import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Date;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-import model.beans.Produto;
+import javax.swing.table.TableModel;
 import model.beans.Venda;
 import util.Validador;
 
 public class TelaRelatorio extends javax.swing.JPanel {
-    
+
     Validador valida = new Validador();
-    
-    public TelaRelatorio() {
+
+    public TelaRelatorio(JFrame parentFrame) {
         initComponents();
         atualizarTabelaVendas();
-        configurarMouseListener();
+        configurarMouseListener(parentFrame);
     }
 
-    private void configurarMouseListener() {
+    private void configurarMouseListener(JFrame parentFrame) {
         tblVendas.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
+                int linha = tblVendas.getSelectedRow();
                 if (e.getClickCount() == 2) { // Verifica se o clique é duplo
                     // Abre a tela de relatório com os produtos da compra
-                    TelaRelatorioCompra telaCadastro = new TelaRelatorioCompra(2);
-                    telaCadastro.setVisible(true);
+                    if (linha != -1) {
+                        // Obtenha o modelo da tabela para acessar os dados da linha selecionada
+                        TableModel vendas = tblVendas.getModel();
+
+                        int idVenda = Integer.parseInt(vendas.getValueAt(linha, 0).toString()); 
+                        TelaRelatorioCompra telaCadastro = new TelaRelatorioCompra(parentFrame,idVenda);
+                        telaCadastro.setVisible(true);
+                    } 
                 }
             }
         });
@@ -59,6 +67,7 @@ public class TelaRelatorio extends javax.swing.JPanel {
         tblVendas = new javax.swing.JTable();
         fieldDtInicio = new javax.swing.JFormattedTextField();
         fieldDtFim = new javax.swing.JFormattedTextField();
+        jButton1 = new javax.swing.JButton();
 
         jPanel1.setLayout(null);
 
@@ -116,6 +125,15 @@ public class TelaRelatorio extends javax.swing.JPanel {
         jPanel1.add(fieldDtFim);
         fieldDtFim.setBounds(105, 28, 90, 22);
 
+        jButton1.setText("Listar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton1);
+        jButton1.setBounds(515, 20, 110, 23);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -137,7 +155,11 @@ public class TelaRelatorio extends javax.swing.JPanel {
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
         PesquisaVendas();
     }//GEN-LAST:event_btnPesquisarActionPerformed
-    
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        atualizarTabelaVendas();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     public void atualizarTabelaVendas() {
         SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
         try {
@@ -157,37 +179,57 @@ public class TelaRelatorio extends javax.swing.JPanel {
                     String.valueOf(item.getValorVenda())
                 });
             }
-        } catch (Exception ex) {
+        } catch (ClassNotFoundException | SQLException | ParseException ex) {
             JOptionPane.showMessageDialog(this, ex, "ERRO", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    private boolean PesquisaVendas(){
+
+    private boolean PesquisaVendas() {
+        SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
         try {
             fieldDtInicio.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
             fieldDtFim.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
             fieldDtInicio = (JFormattedTextField) valida.validaTextField(fieldDtInicio);
             fieldDtFim = (JFormattedTextField) valida.validaTextField(fieldDtFim);
-            
-            if(valida.isDateFimMenorQueInicio(fieldDtInicio,fieldDtFim)){
+
+            if (valida.isDateFimMenorQueInicio(fieldDtInicio, fieldDtFim)) {
                 JOptionPane.showMessageDialog(this, "Por favor, insira uma data final maior que a data de inicio");
                 return false;
             }
-            
-            
-            
+
+            // Obter as datas dos campos
+            Date dateInicio = formatoData.parse(fieldDtInicio.getText());
+            Date dateFim = formatoData.parse(fieldDtFim.getText());
+
+            // Chama a DAO para listar os PCs
+            ArrayList<Venda> lstRetorno = VendaDAO.buscarVendaData(dateInicio, dateFim);
+            DefaultTableModel modelo = (DefaultTableModel) tblVendas.getModel();
+
+            // Limpa as linhas da tabela
+            modelo.setRowCount(0);
+
+            // Para cada item na lista de retorno, adiciono uma linha à tabela
+            for (Venda item : lstRetorno) {
+                modelo.addRow(new String[]{
+                    String.valueOf(item.getIdVenda()),
+                    String.valueOf(item.getCliente().getCpfCliente()),
+                    formatoData.format(item.getDtVenda()),
+                    String.valueOf(item.getValorVenda())
+                });
+            }
+
             return true;
         } catch (ParseException e) {
-            JOptionPane.showMessageDialog(this, e); 
+            JOptionPane.showMessageDialog(this, e);
             return false;
-           
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Preencha todas as datas para consulta");
             return false;
         }
-        
+
     }
-    
+
     private void apenasNumeros(JTextField input) {
 
         input.addKeyListener(new KeyAdapter() {
@@ -204,12 +246,13 @@ public class TelaRelatorio extends javax.swing.JPanel {
         });
 
     }
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnPesquisar;
     private javax.swing.JFormattedTextField fieldDtFim;
     private javax.swing.JFormattedTextField fieldDtInicio;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
