@@ -12,8 +12,7 @@ estado VARCHAR(60) NOT NULL,
 numero VARCHAR(5) NOT NULL,
 complemento VARCHAR(300),
 cpfCliente char(11),
-FOREIGN KEY (cpfCliente) REFERENCES cliente(cpfCliente),
-PRIMARY KEY(idEndereco)
+FOREIGN KEY (cpfCliente) REFERENCES cliente(cpfCliente)
 );
 
 CREATE TABLE cliente(
@@ -49,10 +48,22 @@ FOREIGN KEY (cpfCliente) REFERENCES cliente(cpfCliente)
 );
 
 CREATE TABLE venda_descricao(
-idVenda 		INTEGER PRIMARY KEY,
+idVenda 		INTEGER,
 qtdProduto		INTEGER,
 precoProduto	decimal(14,2),
 nomeProduto		VARCHAR(60),
 nomeCliente		VARCHAR(100),
 FOREIGN KEY (idVenda) REFERENCES venda(idVenda)
 );
+
+
+INSERT INTO categoria
+(nomeCategoria)
+VALUES
+('Camisa'),('Calça'),('Tênis'),('Bermuda'),('Meia'),('Bola'),('Trident');
+
+INSERT INTO cliente
+(nomeCliente, cpfCliente,sexoCliente,emailCliente,numeroCliente,dtNascimento)
+values
+('SemCadastro','0','-','-','-','17-07-2002');
+

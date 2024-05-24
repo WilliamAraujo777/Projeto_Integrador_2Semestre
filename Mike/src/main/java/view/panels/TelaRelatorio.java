@@ -93,7 +93,7 @@ public class TelaRelatorio extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID", "CPF Cliente", "Data da compra", "Valor", "Desconto"
+                "ID", "CPF Cliente", "Data da compra", "Valor", "Desconto(%)"
             }
         ) {
             boolean[] canEdit = new boolean [] {
