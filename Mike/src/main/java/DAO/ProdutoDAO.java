@@ -16,9 +16,10 @@ import model.beans.Categoria;
 import model.beans.Produto;
 
 /**
- *
- * @author Pichau
- */
+* Classe com o objetivo de conter os codigos que relacionam Produto e o banco de dados SQL
+* @author kaikeCarmona, William Araujo, Vitor
+* @see model.beans.*
+*/
 public class ProdutoDAO {
 
     static String url = "jdbc:sqlite:C:/sqlite/mike";
@@ -192,10 +193,10 @@ public class ProdutoDAO {
     /**
      * Buscar um produto pelo nome
      *
-     * @param prodNome
+     * @param id
      * @return
      */
-    public static Produto buscarPorNome(String prodNome) {
+    public static Produto buscaPorId(int id) {
         Produto retorno = null;
         Categoria categoria = new Categoria();
 
@@ -210,9 +211,9 @@ public class ProdutoDAO {
 
             // SELECT
             PreparedStatement comandoSQL = conexao.prepareStatement
-        ("SELECT p.idProduto, p.nomeProduto, p.precoProduto, p.qtdProduto, c.nomeCategoria FROM produto p INNER JOIN categoria c ON p.idCategoria = c.idCategoria  WHERE nomeProduto = ?");
+        ("SELECT p.idProduto, p.nomeProduto, p.precoProduto, p.qtdProduto, c.nomeCategoria FROM produto p INNER JOIN categoria c ON p.idCategoria = c.idCategoria  WHERE p.idProduto = ?");
 
-            comandoSQL.setString(1, prodNome);
+            comandoSQL.setInt(1, id);
 
             // Executando o SQLite
             ResultSet rs = comandoSQL.executeQuery();
@@ -229,9 +230,7 @@ public class ProdutoDAO {
                 retorno = new Produto(idProd, nomeProd, precProd, qtdProd, categoria);
 
             }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
+        } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(ProdutoDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
 

@@ -21,45 +21,59 @@ import util.Validador;
 import view.panels.TelaClientes;
 
 public class CadastroCliente extends JDialog {
+
     TelaClientes telaCliente;
     private List<JTextField> camposDeEntrada;
+    SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+    Cliente cliente;
+    Endereco endereco;
+    ClienteDAO clienteDAO;
+    
+    Validador valida = new Validador();
 
-    Cliente alterarCliente = null;
-//    Endereco alterarEndereco = null;
 
     public CadastroCliente(JFrame parent, TelaClientes telaCliente) {
         super(parent, true);
         initComponents();
         apenasNumeros(fieldNumero);
-        this.getContentPane().setBackground(new Color(255, 255, 255));
         this.telaCliente = telaCliente;
+        inicializarListaCamposDeEntrada();
+        obterCamposDeEntradaDoContainer(panelEndereco);
+        obterCamposDeEntradaDoContainer(panelCliente);
     }
 
-    public CadastroCliente(Cliente obj,JFrame parent,TelaClientes telaCliente) {
+    public CadastroCliente(Cliente obj, JFrame parent, TelaClientes telaCliente) {
         super(parent, true);
+        SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
+        
         initComponents();
         this.getContentPane().setBackground(new Color(255, 255, 255));
 
-        alterarCliente = obj;
+        cliente = obj;
 
-        fieldNome.setText(String.valueOf(alterarCliente.getNomeCliente()));
-        fieldCPF.setText(String.valueOf(alterarCliente.getCpfCliente()));
+        fieldNome.setText(String.valueOf(cliente.getNomeCliente()));
+        fieldCPF.setText(String.valueOf(cliente.getCpfCliente()));
         fieldCPF.setEditable(false);
-        cbSexo.setSelectedItem(alterarCliente.getSexoCliente());
-        fieldNascimento.setText(String.valueOf(alterarCliente.getDtNascimento()));
-        fieldNumero.setText(String.valueOf(alterarCliente.getNumeroCliente()));
-        fieldEmail.setText(String.valueOf(alterarCliente.getEmailCliente()));
+        cbSexo.setSelectedItem(cliente.getSexoCliente());
+        fieldNascimento.setText(formatoData.format(cliente.getDtNascimento()));
+        fieldContato.setText(String.valueOf(cliente.getNumeroCliente()));
+        fieldEmail.setText(String.valueOf(cliente.getEmailCliente()));
 
-        fieldLogradouro.setText(String.valueOf(alterarCliente.getEndereco().getLogradouro()));
-        fieldCEP.setText(String.valueOf(alterarCliente.getEndereco().getCep()));
-        fieldBairro.setText(String.valueOf(alterarCliente.getEndereco().getBairro()));
-        fieldNumero.setText(String.valueOf(alterarCliente.getEndereco().getNumero()));
-        fieldCidade.setText(String.valueOf(alterarCliente.getEndereco().getCidade()));
-        cbEstado.setSelectedItem(alterarCliente.getEndereco().getComplemento());
-        fieldComplemento.setText(String.valueOf(alterarCliente.getEndereco().getComplemento()));
+        fieldLogradouro.setText(String.valueOf(cliente.getEndereco().getLogradouro()));
+        fieldCEP.setText(String.valueOf(cliente.getEndereco().getCep()));
+        fieldBairro.setText(String.valueOf(cliente.getEndereco().getBairro()));
+        fieldNumero.setText(String.valueOf(cliente.getEndereco().getNumero()));
+        fieldCidade.setText(String.valueOf(cliente.getEndereco().getCidade()));
+        cbEstado.setSelectedItem(cliente.getEndereco().getComplemento());
+        fieldComplemento.setText(String.valueOf(cliente.getEndereco().getComplemento()));
         
         btnAdicionar.setText("Editar");
+        btnLimpar.setEnabled(false);
         this.telaCliente = telaCliente;
+        
+        inicializarListaCamposDeEntrada();
+        obterCamposDeEntradaDoContainer(panelEndereco);
+        obterCamposDeEntradaDoContainer(panelCliente);
     }
 
     @SuppressWarnings("unchecked")
@@ -394,43 +408,34 @@ public class CadastroCliente extends JDialog {
     }//GEN-LAST:event_fieldEmailActionPerformed
 
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
-        fieldNome.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
-        fieldCPF.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
-        fieldNascimento.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
-        fieldContato.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
-        fieldEmail.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
-        fieldLogradouro.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
-        fieldBairro.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
-        fieldCidade.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
-        fieldCEP.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
-        fieldNumero.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
-        fieldComplemento.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
+        atualizaBorda();
+        if(!validaCampos()){
+            return;
+        }
+        if(btnAdicionar.getText().equals("Adicionar")){
+            insereCliente();
+        }else{
+            alteraCliente();
+        }
+    }//GEN-LAST:event_btnAdicionarActionPerformed
 
-        Cliente cliente = new Cliente();
-        Endereco endereco = new Endereco();
-        ClienteDAO DAO = new ClienteDAO();
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnVoltarActionPerformed
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
+      limparCamposDeTexto();
+    }//GEN-LAST:event_btnLimparActionPerformed
 
-        Validador valida = new Validador();
-
+    private void insereCliente() {
+        cliente     = new Cliente();
+        endereco    = new Endereco();
+        clienteDAO  = new ClienteDAO();
         try {
-            fieldNome = (JTextField) valida.validaTextField(fieldNome);
-            fieldCPF = (JFormattedTextField) valida.validaTextField(fieldCPF);
-            fieldNascimento = (JFormattedTextField) valida.validaTextField(fieldNascimento);
-            fieldContato = (JFormattedTextField) valida.validaTextField(fieldContato);
-            fieldEmail = (JTextField) valida.validaTextField(fieldEmail);
-            fieldLogradouro = (JTextField) valida.validaTextField(fieldLogradouro);
-            fieldCEP = (JFormattedTextField) valida.validaTextField(fieldCEP);
-            fieldBairro = (JTextField) valida.validaTextField(fieldBairro);
-            fieldNumero = (JTextField) valida.validaTextField(fieldNumero);
-            fieldCidade = (JTextField) valida.validaTextField(fieldCidade);
-            fieldComplemento = (JTextField) valida.validaTextField(fieldComplemento);
-
             cliente.setNomeCliente(fieldNome.getText());
             cliente.setCpfCliente(fieldCPF.getText().replace("-", ""));
             cliente.setEmailCliente(fieldEmail.getText());
-            cliente.setNumeroCliente(fieldContato.getText().replaceAll("[()-]", ""));
+            cliente.setNumeroCliente(fieldContato.getText().replaceAll("[\\s+()-]", ""));
             cliente.setSexoCliente(cbSexo.getSelectedItem().toString().charAt(0));
             cliente.setDtNascimento(formatter.parse(fieldNascimento.getText().replace("/", "-")));
 
@@ -444,44 +449,89 @@ public class CadastroCliente extends JDialog {
 
             cliente.setEndereco(endereco);
 
-            boolean funcionou = DAO.salvarCliente(cliente);
+            boolean funcionou = clienteDAO.salvarCliente(cliente);
 
             if (funcionou == true) {
                 JOptionPane.showMessageDialog(fieldComplemento, "Cadastro Realizado com Sucesso!");
                 telaCliente.atualizarTabela();
                 this.dispose();
             } else {
-                JOptionPane.showMessageDialog(null, "Erro ao cadastrar cliente!");
-
+                JOptionPane.showMessageDialog(null, "Erro ao cadastrar cliente! Verifique se o CPF já está cadastrado no sistema.");
             }
+            
         } catch (ParseException ex) {
             JOptionPane.showMessageDialog(fieldComplemento, "Data de nascimento inválida");
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(fieldComplemento, "Prrencha todos os campos obrigatórios!");
         }
 
+    }
+    
+    private void alteraCliente() {
+        cliente     = new Cliente();
+        endereco    = new Endereco();
+        clienteDAO  = new ClienteDAO();
+        try {
+            cliente.setCpfCliente(fieldCPF.getText().replace("-", ""));
+            cliente.setNomeCliente(fieldNome.getText());
+            cliente.setEmailCliente(fieldEmail.getText());
+            cliente.setNumeroCliente(fieldContato.getText().replaceAll("[\\s+()-]", ""));
+            cliente.setSexoCliente(cbSexo.getSelectedItem().toString().charAt(0));
+            cliente.setDtNascimento(formatter.parse(fieldNascimento.getText().replace("/", "-")));
+            endereco.setLogradouro(fieldLogradouro.getText());
+            endereco.setCep(fieldCEP.getText().replace("-", ""));
+            endereco.setBairro(fieldBairro.getText());
+            endereco.setNumero(fieldNumero.getText());
+            endereco.setCidade(fieldCidade.getText());
+            endereco.setEstado(cbEstado.getSelectedItem().toString());
+            endereco.setComplemento(fieldComplemento.getText());
+
+            cliente.setEndereco(endereco);
+
+            boolean funcionou = clienteDAO.alterarCliente(cliente);
+
+            if (funcionou == true) {
+                JOptionPane.showMessageDialog(fieldComplemento, "Cadastro Alterado com Sucesso!");
+                telaCliente.atualizarTabela();
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Erro ao alterar cliente!");
+
+            }
+            
+        } catch (ParseException ex) {
+            JOptionPane.showMessageDialog(fieldComplemento, "Data de nascimento inválida");
+        }
+
+    }
+
+    private boolean validaCampos() {
         
-    }//GEN-LAST:event_btnAdicionarActionPerformed
-
-    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_btnVoltarActionPerformed
-
-    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
-        inicializarListaCamposDeEntrada();
-        obterCamposDeEntradaDoContainer(panelEndereco);
-        obterCamposDeEntradaDoContainer(panelCliente);
-        limparCamposDeTexto();
-    }//GEN-LAST:event_btnLimparActionPerformed
+        try {
+            fieldNome = (JTextField) valida.validaTextField(fieldNome);
+            fieldCPF = (JFormattedTextField) valida.validaTextField(fieldCPF);
+            fieldNascimento = (JFormattedTextField) valida.validaTextField(fieldNascimento);
+            fieldContato = (JFormattedTextField) valida.validaTextField(fieldContato);
+            fieldEmail = (JTextField) valida.validaTextField(fieldEmail);
+            fieldLogradouro = (JTextField) valida.validaTextField(fieldLogradouro);
+            fieldCEP = (JFormattedTextField) valida.validaTextField(fieldCEP);
+            fieldBairro = (JTextField) valida.validaTextField(fieldBairro);
+            fieldNumero = (JTextField) valida.validaTextField(fieldNumero);
+            fieldCidade = (JTextField) valida.validaTextField(fieldCidade);
+            return true;
+         } catch (Exception ex) {
+            JOptionPane.showMessageDialog(fieldComplemento, "Verifique se os campos estão preenchidos");
+            return false;
+        }
+    }
 
     private void apenasNumeros(JTextField input) {
 
         input.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent evt) {
+                char c = evt.getKeyChar();
                 String value = input.getText();
                 int l = value.length();
-                if (evt.getKeyChar() >= '0' && evt.getKeyChar() <= '9') {
+                if (Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
                     input.setEditable(true);
                 } else {
                     input.setEditable(false);
@@ -511,6 +561,13 @@ public class CadastroCliente extends JDialog {
             campo.setText(""); // Limpa o texto do campo
         }
     }
+    
+    private void atualizaBorda() {
+        for (JTextField campo : camposDeEntrada) {
+            campo.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY)); // Limpa o texto do campo
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionar;

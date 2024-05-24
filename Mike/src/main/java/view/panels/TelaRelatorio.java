@@ -93,11 +93,11 @@ public class TelaRelatorio extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID", "CPF Cliente", "Data da compra", "Valor"
+                "ID", "CPF Cliente", "Data da compra", "Valor", "Desconto"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -114,6 +114,11 @@ public class TelaRelatorio extends javax.swing.JPanel {
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
+        fieldDtInicio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fieldDtInicioActionPerformed(evt);
+            }
+        });
         jPanel1.add(fieldDtInicio);
         fieldDtInicio.setBounds(6, 28, 90, 22);
 
@@ -140,14 +145,14 @@ public class TelaRelatorio extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -159,6 +164,10 @@ public class TelaRelatorio extends javax.swing.JPanel {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         atualizarTabelaVendas();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void fieldDtInicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldDtInicioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fieldDtInicioActionPerformed
 
     public void atualizarTabelaVendas() {
         SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
@@ -176,7 +185,8 @@ public class TelaRelatorio extends javax.swing.JPanel {
                     String.valueOf(item.getIdVenda()),
                     String.valueOf(item.getCliente().getCpfCliente()),
                     formatoData.format(item.getDtVenda()),
-                    String.valueOf(item.getValorVenda())
+                    String.valueOf(item.getValorVenda()),
+                    String.valueOf(item.getValorDesconto())
                 });
             }
         } catch (ClassNotFoundException | SQLException | ParseException ex) {
@@ -214,7 +224,8 @@ public class TelaRelatorio extends javax.swing.JPanel {
                     String.valueOf(item.getIdVenda()),
                     String.valueOf(item.getCliente().getCpfCliente()),
                     formatoData.format(item.getDtVenda()),
-                    String.valueOf(item.getValorVenda())
+                    String.valueOf(item.getValorVenda()),
+                    String.valueOf(item.getValorDesconto())
                 });
             }
 

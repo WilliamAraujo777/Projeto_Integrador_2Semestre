@@ -7,20 +7,22 @@ package view.panels;
 import DAO.ClienteDAO;
 import DAO.EnderecoDAO;
 import java.awt.Color;
-import java.awt.Cursor;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import model.beans.*;
+import util.Validador;
 import view.CadastroCliente;
 
 /**
@@ -28,10 +30,12 @@ import view.CadastroCliente;
  * @author aroni
  */
 public class TelaClientes extends javax.swing.JPanel {
-    
+
     JFrame parent;
+
     /**
      * Creates new form Produtos
+     *
      * @param parentFrame
      */
     public TelaClientes(JFrame parentFrame) {
@@ -52,10 +56,12 @@ public class TelaClientes extends javax.swing.JPanel {
         jScrollPane3 = new javax.swing.JScrollPane();
         tblCliente = new javax.swing.JTable();
         btnListar = new javax.swing.JButton();
-        txtNomeCliente = new javax.swing.JTextField();
         btnExcluir = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
         btnAdicionar = new javax.swing.JButton();
+        btnPesquisaCPF = new javax.swing.JButton();
+        fieldCPF = new javax.swing.JFormattedTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(722, 500));
@@ -110,6 +116,21 @@ public class TelaClientes extends javax.swing.JPanel {
             }
         });
 
+        btnPesquisaCPF.setText("Pesquisar por CPF");
+        btnPesquisaCPF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisaCPFActionPerformed(evt);
+            }
+        });
+
+        try {
+            fieldCPF.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("#########-##")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+
+        jLabel1.setText("CPF");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -118,8 +139,12 @@ public class TelaClientes extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtNomeCliente)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fieldCPF, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(60, 60, 60)
+                        .addComponent(btnPesquisaCPF)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnListar, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
@@ -136,7 +161,9 @@ public class TelaClientes extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnListar)
-                    .addComponent(txtNomeCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnPesquisaCPF)
+                    .addComponent(fieldCPF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -159,39 +186,12 @@ public class TelaClientes extends javax.swing.JPanel {
 
     private void btnListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarActionPerformed
         // Verifica se o usuário está procurando por algum processador em específico
-        if (txtNomeCliente.getText().strip().equals("")) {
-            atualizarTabela();
-        } else {
-            try {
-                String nomeCliente = txtNomeCliente.getText();
-
-                Cliente retorno = ClienteDAO.buscarPorNome(nomeCliente); // Filtrando produtos pelo nome;
-
-                if (retorno != null) {
-                    DefaultTableModel modelo = (DefaultTableModel) tblCliente.getModel();
-                    modelo.setRowCount(0);
-
-                    modelo.addRow(new String[]{
-                        String.valueOf(retorno.getCpfCliente()),
-                        String.valueOf(retorno.getNomeCliente()),
-                        String.valueOf(retorno.getSexoCliente()),
-                        String.valueOf(retorno.getEmailCliente()),
-                        String.valueOf(retorno.getNumeroCliente()),
-                        String.valueOf(retorno.getDtNascimento()),
-                        String.valueOf(retorno.getEndereco().getEstado()),
-                        String.valueOf(retorno.getEndereco().getCidade())
-                    });
-                }
-            } catch (ParseException ex) {
-                Logger.getLogger(TelaClientes.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        atualizarTabela();
     }//GEN-LAST:event_btnListarActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
         int linhaSelecionada = tblCliente.getSelectedRow(); // Recebendo a linha selecionada
-        SimpleDateFormat formato = new SimpleDateFormat("EE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
         // Recebendo dados da linha selecionada
         if (linhaSelecionada >= 0) {
             try {
@@ -210,7 +210,7 @@ public class TelaClientes extends javax.swing.JPanel {
                 Endereco endereco = EnderecoDAO.obterEnderecoPorCPF(cpfCliente);
 
                 Cliente alterarCliente = new Cliente(cpfCliente, nomeCliente, sexoChar, emailCliente, numeroCliente, dataDate, endereco); // Passando os dados para o construtor que os modifica
-                CadastroCliente cadastro = new CadastroCliente(alterarCliente,this.parent, this); // Chama a tela de cadastro no modo de alteração
+                CadastroCliente cadastro = new CadastroCliente(alterarCliente, this.parent, this); // Chama a tela de cadastro no modo de alteração
                 cadastro.setVisible(true);
             } catch (ParseException | ClassNotFoundException | SQLException ex) {
                 Logger.getLogger(TelaClientes.class.getName()).log(Level.SEVERE, null, ex);
@@ -232,6 +232,7 @@ public class TelaClientes extends javax.swing.JPanel {
             boolean retorno = ClienteDAO.excluir(cpf);
             if (retorno) {
                 JOptionPane.showMessageDialog(this, "Sucesso!");
+                atualizarTabela();
             } else {
                 JOptionPane.showMessageDialog(this, "Falha!");
             }
@@ -240,39 +241,65 @@ public class TelaClientes extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
-    private void mouseEmcimaPainel(JPanel panel) {
-        panel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                panel.setBackground(new Color(200, 200, 200));
-                panel.setForeground(Color.white);
-                Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-                panel.setCursor(cursor);
+    private void btnPesquisaCPFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisaCPFActionPerformed
+        SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
+        fieldCPF.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
+        if (!validaCampos()) {
+            return;
+        }
+        try {
+            String cpfCliente = fieldCPF.getText().replace("-", "");
+            Cliente retorno = ClienteDAO.bucarPorCPF(cpfCliente); // Filtrando produtos pelo nome;
+
+            if (retorno != null) {
+                DefaultTableModel modelo = (DefaultTableModel) tblCliente.getModel();
+                modelo.setRowCount(0);
+
+                modelo.addRow(new String[]{
+                    String.valueOf(retorno.getCpfCliente()),
+                    String.valueOf(retorno.getNomeCliente()),
+                    String.valueOf(retorno.getSexoCliente()),
+                    String.valueOf(retorno.getEmailCliente()),
+                    String.valueOf(retorno.getNumeroCliente()),
+                     formatoData.format(retorno.getDtNascimento()),
+                    String.valueOf(retorno.getEndereco().getEstado()),
+                    String.valueOf(retorno.getEndereco().getCidade())
+                });
+            } else {
+                JOptionPane.showMessageDialog(this, "CPF não localizado no banco");
             }
-            // Adicione outros métodos de mouse aqui, se necessário
-        });
+        } catch (ParseException ex) {
+            Logger.getLogger(TelaClientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_btnPesquisaCPFActionPerformed
+    
+    
+    private boolean validaCampos() {
+        Validador valida = new Validador();
+        try {
+            fieldCPF = (JFormattedTextField) valida.validaTextField(fieldCPF);
+            return true;
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Verifique se os campos estão preenchidos");
+            return false;
+        }
     }
+    
+    
+    
 
-    private void configurarBotaoMouseExited(JPanel panel) {
-        panel.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                panel.setBackground(Color.white);
-                panel.setForeground(Color.black);
-
-            }
-        });
-    }
-
-    public void atualizarTabela(){
+    public void atualizarTabela() {
+        SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
         try {
             // Chama a DAO para listar as notas
             ArrayList<Cliente> cliente = ClienteDAO.listar();
-            
+
             DefaultTableModel modelo = (DefaultTableModel) tblCliente.getModel();
-            
+
             // Limpa as linhas da tabela
             modelo.setRowCount(0);
-            
+
             // Para cada item na lista de retorno, adiciono uma linha à tabela
             for (Cliente item : cliente) {
                 modelo.addRow(new String[]{
@@ -281,27 +308,27 @@ public class TelaClientes extends javax.swing.JPanel {
                     String.valueOf(item.getSexoCliente()),
                     String.valueOf(item.getEmailCliente()),
                     String.valueOf(item.getNumeroCliente()),
-                    String.valueOf(item.getDtNascimento()),
+                    formatoData.format(item.getDtNascimento()),
                     String.valueOf(item.getEndereco().getEstado()),
                     String.valueOf(item.getEndereco().getCidade())
                 });
             }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TelaClientes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(TelaClientes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
+        } catch (ClassNotFoundException | SQLException | ParseException ex) {
             Logger.getLogger(TelaClientes.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnListar;
+    private javax.swing.JButton btnPesquisaCPF;
+    private javax.swing.JFormattedTextField fieldCPF;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable tblCliente;
-    private javax.swing.JTextField txtNomeCliente;
     // End of variables declaration//GEN-END:variables
 }

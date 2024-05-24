@@ -6,11 +6,16 @@ package view;
 
 import DAO.ProdutoDAO;
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import model.beans.Categoria;
 import model.beans.Produto;
+import util.Validador;
 import view.panels.TelaProdutos;
 
 /**
@@ -18,11 +23,13 @@ import view.panels.TelaProdutos;
  * @author Vítor
  */
 public class CadastroProduto extends javax.swing.JDialog {
+
     TelaProdutos telaProduto;
     Produto alterarProduto = null;
 
     /**
      * Creates new form CadastroProduto
+     *
      * @param parent
      * @param telaProduto
      */
@@ -30,9 +37,11 @@ public class CadastroProduto extends javax.swing.JDialog {
         super(parent, true);
         initComponents();
         this.telaProduto = telaProduto;
+        apenasNumeros(txtQtdProd);
+        apenasNumeros(txtPrecProd);
     }
 
-    public CadastroProduto(Produto obj,JFrame parent, TelaProdutos telaProduto) {
+    public CadastroProduto(Produto obj, JFrame parent, TelaProdutos telaProduto) {
         super(parent, true);
         initComponents();
         this.getContentPane().setBackground(new Color(255, 255, 255));
@@ -45,6 +54,8 @@ public class CadastroProduto extends javax.swing.JDialog {
         cbCatProd.setSelectedItem(alterarProduto.getCategoria().getnomeCategoria());
         this.telaProduto = telaProduto;
         btnSalvar.setText("Editar");
+        apenasNumeros(txtQtdProd);
+        apenasNumeros(txtPrecProd);
     }
 
     /**
@@ -79,6 +90,12 @@ public class CadastroProduto extends javax.swing.JDialog {
 
         jLabel2.setText("Quantidade");
 
+        txtPrecProd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPrecProdActionPerformed(evt);
+            }
+        });
+
         jLabel3.setText("Preço");
 
         jLabel4.setText("Categoria");
@@ -93,6 +110,11 @@ public class CadastroProduto extends javax.swing.JDialog {
         });
 
         jButton2.setText("Cancelar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -169,9 +191,12 @@ public class CadastroProduto extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        
-// Verifica se está inserindo ou alterando
+        if (!validaCampos()) {
+            return;
+        }
+        // Verifica se está inserindo ou alterando
         if (alterarProduto == null) {
+
             // Resgata os dados inseridos pelo usuário
             String nomeProd = txtNomeProd.getText();
             double precProd = Double.parseDouble(txtPrecProd.getText());
@@ -193,11 +218,9 @@ public class CadastroProduto extends javax.swing.JDialog {
             } else if (catProd.equalsIgnoreCase("bola")) {
                 idCat = 6;
             }
-            
-            
+
             Categoria categoria = new Categoria(idCat, catProd);
-            
-            
+
             //Passar os dados para o objeto
             Produto novoProduto = new Produto(nomeProd, precProd, qtdProd, categoria);
 
@@ -211,12 +234,15 @@ public class CadastroProduto extends javax.swing.JDialog {
             } else {
                 JOptionPane.showMessageDialog(rootPane, "Falha!");
             }
-            
-            
+
         } else {
             // Modo de alteração
             String nomeProd = txtNomeProd.getText();
             double precProd = Double.parseDouble(txtPrecProd.getText());
+
+            if (precProd < 0) {
+                JOptionPane.showMessageDialog(rootPane, "Por favor, insira valores positivos.");
+            }
             int qtdProd = Integer.parseInt(txtQtdProd.getText());
             String catProd = cbCatProd.getSelectedItem().toString();
             int idCat = 0;
@@ -253,6 +279,58 @@ public class CadastroProduto extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private boolean validaCampos() {
+        Validador valida = new Validador();
+        txtPrecProd.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
+        txtNomeProd.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
+        txtQtdProd.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
+
+        try {
+            txtNomeProd = (JTextField) valida.validaTextField(txtNomeProd);
+            txtPrecProd = (JTextField) valida.validaTextField(txtPrecProd);
+            txtQtdProd = (JTextField) valida.validaTextField(txtQtdProd);
+            if (txtQtdProd.getText().contains(",")) {
+                JOptionPane.showMessageDialog(this, "´Por favor, não inclua , no campo de valor, insira .");
+                return false;
+            }
+
+            return true;
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Verifique se os campos estão preenchidos");
+            return false;
+        }
+    }
+
+    private void apenasNumeros(JTextField input) {
+
+        input.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent evt) {
+                char c = evt.getKeyChar();
+                String value = input.getText();
+                int l = value.length();
+                if (Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE || c == '.') {
+                    if (c == '.' && input.getText().contains(".")) {
+                        input.setEditable(false);
+                    } else {
+                        // Permite editar
+                        input.setEditable(true);
+                    }
+                } else {
+                    input.setEditable(false);
+                }
+            }
+        });
+
+    }
+    private void txtPrecProdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecProdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPrecProdActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSalvar;

@@ -221,8 +221,6 @@ public class TelaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVendasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendasMouseClicked
-        
-        
         if(!pnlAtivo.equals("venda")){
             pnlVendas.atualizaTela();
         }        

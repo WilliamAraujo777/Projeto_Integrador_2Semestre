@@ -5,37 +5,47 @@
 package view.panels;
 
 import DAO.*;
+import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import model.beans.*;
+import util.Validador;
+
 /**
  *
  * @author William
  */
 public class TelaVendas extends javax.swing.JPanel {
-    
+
     public boolean vendaEmAndamento = false;
-    
+
+    boolean fgDesconto = false;
+
     Produto produto;
     Cliente cliente;
     Venda venda;
     VendaDescricao venda_desc;
-    
- 
+
     public TelaVendas() {
         initComponents();
         atualizaTela();
+        apenasNumeros(fieldDesconto);
+        lblDesconto.setVisible(false);
     }
 
- 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -48,11 +58,7 @@ public class TelaVendas extends javax.swing.JPanel {
         tblClientes = new javax.swing.JTable();
         btnAdicionaProduto = new javax.swing.JButton();
         btnAdicionaCliente = new javax.swing.JButton();
-        cbTipoPesquisa = new javax.swing.JComboBox<>();
-        cbTipoPesquisaClientes = new javax.swing.JComboBox<>();
-        fieldPesquisaProduto = new javax.swing.JTextField();
         fieldPesquisaCliente = new javax.swing.JTextField();
-        btnPesquisaProduto = new javax.swing.JButton();
         btnPesquisaCliente = new javax.swing.JButton();
         pnlCarrinho = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -70,6 +76,9 @@ public class TelaVendas extends javax.swing.JPanel {
         btnAplicaDesconto2 = new javax.swing.JButton();
         fieldDesconto = new javax.swing.JTextField();
         checkSemCadastro = new javax.swing.JCheckBox();
+        btnPesquisaCliente1 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        lblDesconto = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(943, 528));
@@ -151,27 +160,18 @@ public class TelaVendas extends javax.swing.JPanel {
             }
         });
         add(btnAdicionaCliente);
-        btnAdicionaCliente.setBounds(360, 410, 84, 23);
-
-        cbTipoPesquisa.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Codigo", "Nome" }));
-        add(cbTipoPesquisa);
-        cbTipoPesquisa.setBounds(6, 231, 73, 22);
-
-        cbTipoPesquisaClientes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CPF", "Nome" }));
-        add(cbTipoPesquisaClientes);
-        cbTipoPesquisaClientes.setBounds(6, 406, 72, 22);
-        add(fieldPesquisaProduto);
-        fieldPesquisaProduto.setBounds(85, 231, 150, 22);
+        btnAdicionaCliente.setBounds(364, 410, 90, 23);
         add(fieldPesquisaCliente);
-        fieldPesquisaCliente.setBounds(84, 406, 148, 22);
-
-        btnPesquisaProduto.setText("Buscar");
-        add(btnPesquisaProduto);
-        btnPesquisaProduto.setBounds(241, 231, 72, 23);
+        fieldPesquisaCliente.setBounds(40, 410, 100, 20);
 
         btnPesquisaCliente.setText("Buscar");
+        btnPesquisaCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisaClienteActionPerformed(evt);
+            }
+        });
         add(btnPesquisaCliente);
-        btnPesquisaCliente.setBounds(238, 406, 72, 23);
+        btnPesquisaCliente.setBounds(150, 410, 72, 20);
 
         pnlCarrinho.setBackground(new java.awt.Color(255, 255, 255));
         pnlCarrinho.setPreferredSize(new java.awt.Dimension(472, 450));
@@ -189,7 +189,7 @@ public class TelaVendas extends javax.swing.JPanel {
         pnlValor.setBackground(new java.awt.Color(255, 255, 255));
         pnlValor.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jLabel1.setText("Valor Total da Compra");
+        jLabel1.setText("Valor");
 
         fieldTotal.setEnabled(false);
 
@@ -264,7 +264,7 @@ public class TelaVendas extends javax.swing.JPanel {
             }
         });
         add(btnElimina);
-        btnElimina.setBounds(470, 410, 100, 23);
+        btnElimina.setBounds(470, 413, 100, 20);
 
         pnlDesconto1.setBackground(new java.awt.Color(255, 255, 255));
         pnlDesconto1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -272,6 +272,11 @@ public class TelaVendas extends javax.swing.JPanel {
         jLabel2.setText("Desconto (%)");
 
         btnAplicaDesconto1.setText("Retirar");
+        btnAplicaDesconto1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAplicaDesconto1ActionPerformed(evt);
+            }
+        });
 
         btnAplicaDesconto2.setText("Aplicar");
         btnAplicaDesconto2.addActionListener(new java.awt.event.ActionListener() {
@@ -318,6 +323,24 @@ public class TelaVendas extends javax.swing.JPanel {
         });
         add(checkSemCadastro);
         checkSemCadastro.setBounds(10, 440, 100, 20);
+
+        btnPesquisaCliente1.setText("Listar");
+        btnPesquisaCliente1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisaCliente1ActionPerformed(evt);
+            }
+        });
+        add(btnPesquisaCliente1);
+        btnPesquisaCliente1.setBounds(230, 410, 80, 20);
+
+        jLabel4.setText("CPF:");
+        add(jLabel4);
+        jLabel4.setBounds(10, 410, 24, 20);
+
+        lblDesconto.setForeground(new java.awt.Color(255, 51, 51));
+        lblDesconto.setText("Desconto Aplicado");
+        add(lblDesconto);
+        lblDesconto.setBounds(490, 460, 100, 16);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAdicionaProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionaProdutoActionPerformed
@@ -328,9 +351,9 @@ public class TelaVendas extends javax.swing.JPanel {
             TableModel produtos = tblProdutos.getModel();
             boolean controle = true;
 
-            int idProduto       = Integer.parseInt(produtos.getValueAt(linha, 0).toString());
-            String nomeProduto  = produtos.getValueAt(linha, 1).toString();
-            int qtdProduto      = Integer.parseInt(produtos.getValueAt(linha, 2).toString());
+            int idProduto = Integer.parseInt(produtos.getValueAt(linha, 0).toString());
+            String nomeProduto = produtos.getValueAt(linha, 1).toString();
+            int qtdProduto = Integer.parseInt(produtos.getValueAt(linha, 2).toString());
             double precoProduto = Double.parseDouble(produtos.getValueAt(linha, 3).toString());
 
             while (controle) {
@@ -352,6 +375,9 @@ public class TelaVendas extends javax.swing.JPanel {
                         addProdutoCarrinho(idProduto, nomeProduto, precoProduto, qtdSelecionada);
                         atualizaQtdProduto(linha, qtdProduto, qtdSelecionada);
                         atualizaPrecoTotal();
+                        if(fgDesconto){
+                            aplicaDesconto();
+                        }
                     } else {
                         JOptionPane.showMessageDialog(this, "Você inseriu mais do que consta no estoque.");
                     }
@@ -368,20 +394,20 @@ public class TelaVendas extends javax.swing.JPanel {
     }//GEN-LAST:event_btnAdicionaProdutoActionPerformed
 
     private void btnAdicionaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionaClienteActionPerformed
-         int linha = tblClientes.getSelectedRow();
+        int linha = tblClientes.getSelectedRow();
 
-         if (linha != -1) {
-             
-              DefaultTableModel clientes = (DefaultTableModel) tblClientes.getModel();
-              String cpfCliente = clientes.getValueAt(linha, 0).toString();
-              String nomeCliente = clientes.getValueAt(linha, 1).toString();
-              
-              cliente = new Cliente(cpfCliente,nomeCliente);
-              
-              lblUsuarioSelecionado.setText(nomeCliente);
-         }else{
-           JOptionPane.showMessageDialog(this, "Nenhuma linha selecionada.");
-         }  
+        if (linha != -1) {
+
+            DefaultTableModel clientes = (DefaultTableModel) tblClientes.getModel();
+            String cpfCliente = clientes.getValueAt(linha, 0).toString();
+            String nomeCliente = clientes.getValueAt(linha, 1).toString();
+
+            cliente = new Cliente(cpfCliente, nomeCliente);
+
+            lblUsuarioSelecionado.setText(nomeCliente);
+        } else {
+            JOptionPane.showMessageDialog(this, "Nenhuma linha selecionada.");
+        }
     }//GEN-LAST:event_btnAdicionaClienteActionPerformed
 
     private void btnEliminaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminaActionPerformed
@@ -411,22 +437,144 @@ public class TelaVendas extends javax.swing.JPanel {
     }//GEN-LAST:event_btnEliminaActionPerformed
 
     private void btnAplicaDesconto2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAplicaDesconto2ActionPerformed
-        // TODO add your handling code here:
+        Validador valida = new Validador();
+        try {
+            fieldDesconto = (JTextField) valida.validaTextField(fieldDesconto);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Verifique se os campos estão preenchidos");
+            return;
+        }
+
+        aplicaDesconto();
+        
     }//GEN-LAST:event_btnAplicaDesconto2ActionPerformed
+
+    private void aplicaDesconto() {
+        Validador valida = new Validador();
+        try {
+            
+            Double desconto = Double.parseDouble(fieldDesconto.getText());
+            if (verificaCarrinho()) {
+                if (desconto > 30) {
+                    JOptionPane.showMessageDialog(this, "Desconto permitido apenas até 30%!");
+                    return;
+                }
+
+                double total = Double.parseDouble(fieldTotal.getText().replace(",", "."));
+                double totalDesconto= total - (total * (desconto / 100));
+                fgDesconto = true;
+                fieldTotal.setText(String.format("%.2f", totalDesconto));
+                JOptionPane.showMessageDialog(this, "Desconto Aplicado");
+                lblDesconto.setVisible(true);
+                fieldDesconto.setEnabled(false);
+            } else {
+                JOptionPane.showMessageDialog(this, "O Carrinho está vazio");
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Verifique se os campos estão preenchidos");
+        }
+    }
+
+    private void apenasNumeros(JTextField input) {
+        input.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent evt) {
+                char c = evt.getKeyChar();
+                String value = input.getText();
+                int l = value.length();
+
+                if (Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE || c == '.') {
+                    if (c == '.' && value.contains(".")) {
+                        // Se já houver um ponto no texto, não permite outro
+                        input.setEditable(false);
+                    } else if (l >= 5 && Character.isDigit(c)) {
+                        // Impede mais de 5 dígitos
+                        input.setEditable(false);
+                    } else if (l >= 6 && value.contains(".") && Character.isDigit(c)) {
+                        // Impede mais de 5 caracteres no total se já houver um ponto
+                        input.setEditable(false);
+                    } else {
+                        // Permite editar
+                        input.setEditable(true);
+                    }
+                } else {
+                    // Impede editar caracteres não permitidos
+                    input.setEditable(false);
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent evt) {
+                input.setEditable(true);  // Permite editar novamente após a tecla ser liberada
+            }
+        });
+    }
 
     private void btnFinalizaCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFinalizaCompraActionPerformed
         efetuaVenda();
     }//GEN-LAST:event_btnFinalizaCompraActionPerformed
 
     private void checkSemCadastroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkSemCadastroActionPerformed
-        if(checkSemCadastro.isSelected()) {
+        if (checkSemCadastro.isSelected()) {
             btnAdicionaCliente.setEnabled(false);
             lblUsuarioSelecionado.setText("Compra Sem Cadastro");
-        }else{
+            cliente = new Cliente("0", "SemCadastro");
+        } else {
             btnAdicionaCliente.setEnabled(true);
             lblUsuarioSelecionado.setText("--");
         }
     }//GEN-LAST:event_checkSemCadastroActionPerformed
+
+    private void btnPesquisaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisaClienteActionPerformed
+        SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
+        fieldPesquisaCliente.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
+        if (!validaCampos()) {
+            return;
+        }
+
+        try {
+            String cpfCliente = fieldPesquisaCliente.getText().replace("-", "");
+            Cliente retorno = ClienteDAO.bucarPorCPF(cpfCliente); // Filtrando produtos pelo nome;
+
+            if (retorno != null) {
+                DefaultTableModel modelo = (DefaultTableModel) tblClientes.getModel();
+                modelo.setRowCount(0);
+
+                modelo.addRow(new String[]{
+                    String.valueOf(retorno.getCpfCliente()),
+                    String.valueOf(retorno.getNomeCliente()),
+                    String.valueOf(formatoData.format(retorno.getDtNascimento()))
+                });
+            } else {
+                JOptionPane.showMessageDialog(this, "CPF não localizado no banco");
+            }
+        } catch (ParseException ex) {
+            Logger.getLogger(TelaClientes.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnPesquisaClienteActionPerformed
+
+    private void btnPesquisaCliente1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisaCliente1ActionPerformed
+        atualizarTabelaCliente();
+    }//GEN-LAST:event_btnPesquisaCliente1ActionPerformed
+
+    private void btnAplicaDesconto1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAplicaDesconto1ActionPerformed
+        atualizaPrecoTotal();
+        lblDesconto.setVisible(false);
+        fieldDesconto.setEnabled(true);
+        fgDesconto = false;
+    }//GEN-LAST:event_btnAplicaDesconto1ActionPerformed
+    private boolean validaCampos() {
+        Validador valida = new Validador();
+        try {
+            fieldPesquisaCliente = (JTextField) valida.validaTextField(fieldPesquisaCliente);
+
+            return true;
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Verifique se os campos estão preenchidos");
+            return false;
+        }
+    }
 
     private void atualizaQtdRemovida(int id, String nomeProduto, int qtdRemovida, double precoProduto) {
         DefaultTableModel produtos = (DefaultTableModel) tblProdutos.getModel();
@@ -506,76 +654,89 @@ public class TelaVendas extends javax.swing.JPanel {
 
         fieldTotal.setText(String.format("%.2f", precoTotal));
     }
-    
-    private void efetuaVenda(){
-        
+
+    private void efetuaVenda() {
+
         VendaDAO daovenda = new VendaDAO();
-        
-        if(lblUsuarioSelecionado.getText().equals("--")){
-            JOptionPane.showMessageDialog(this, 
+
+        if (lblUsuarioSelecionado.getText().equals("--")) {
+            JOptionPane.showMessageDialog(this,
                     "Adicione um cliente a venda, ou selecione 'Sem Cadastro'",
-                    "Atenção", 
+                    "Atenção",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         double valor = Double.parseDouble(fieldTotal.getText().replace(",", "."));
-        
-        if(valor == 0.00){
-            JOptionPane.showMessageDialog(this, 
+
+        if (valor == 0.00) {
+            JOptionPane.showMessageDialog(this,
                     "Adicione produtos no carrinho!",
-                    "Atenção", 
+                    "Atenção",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         Date now = new Date();
-        
-        try{
-            venda = new Venda(valor, now,cliente);
+
+        try {
+            venda = new Venda(valor, now, cliente);
             List<Produto> listaProdutos = criarListaProdutos(tblCarrinho);
-          
-            venda_desc =  new VendaDescricao(venda,listaProdutos);
             
-            daovenda.efetuaVenda(venda_desc);    
+            if(fgDesconto){
+                venda.setValorDesconto(Double.parseDouble(fieldDesconto.getText()));
+            }else{
+               venda.setValorDesconto(0.0);
+            }
             
+
+            venda_desc = new VendaDescricao(venda, listaProdutos);
+
+            daovenda.efetuaVenda(venda_desc);
+
             JOptionPane.showMessageDialog(this, "Venda Realizado com Sucesso!");
             atualizaTela();
-            
+
         } catch (ClassNotFoundException | SQLException ex) {
-                JOptionPane.showMessageDialog(this, ex, "ERRO", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, ex, "ERRO", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     public static List<Produto> criarListaProdutos(JTable tblCarrinho) {
         List<Produto> listaProdutos = new ArrayList<>();
         TableModel model = tblCarrinho.getModel();
-        
+
         for (int i = 0; i < model.getRowCount(); i++) {
             int idProduto = Integer.parseInt(model.getValueAt(i, 0).toString());
+            String nomeProduto =model.getValueAt(i, 1).toString();
             int qtdProduto = Integer.parseInt(model.getValueAt(i, 2).toString());
             double precoQuantidade = Double.parseDouble(model.getValueAt(i, 4).toString());
 
-            Produto produto = new Produto(idProduto,precoQuantidade,qtdProduto);
+            Produto produto = new Produto(idProduto, precoQuantidade, qtdProduto);
+            produto.setNomeProduto(nomeProduto);
             listaProdutos.add(produto);
         }
 
         return listaProdutos;
     }
-    
-    public void atualizaTela(){
+
+    public void atualizaTela() {
         atualizarTabelaCliente();
         atualizarTabelaProduto();
-        
+
         DefaultTableModel carrinho = (DefaultTableModel) tblCarrinho.getModel();
         carrinho.setRowCount(0);
         lblUsuarioSelecionado.setText("--");
         checkSemCadastro.setSelected(false);
         btnAdicionaCliente.setEnabled(true);
-        vendaEmAndamento =false;
-        atualizaPrecoTotal();   
+        vendaEmAndamento = false;
+        fgDesconto = false;
+        fieldDesconto.setEnabled(true);
+        fieldDesconto.setText("");
+        lblDesconto.setVisible(false);
+        atualizaPrecoTotal();
     }
-    
+
     public void atualizarTabelaCliente() {
         SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
         try {
@@ -622,6 +783,7 @@ public class TelaVendas extends javax.swing.JPanel {
         }
     }
 
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionaCliente;
     private javax.swing.JButton btnAdicionaProduto;
@@ -630,20 +792,19 @@ public class TelaVendas extends javax.swing.JPanel {
     private javax.swing.JButton btnElimina;
     private javax.swing.JButton btnFinalizaCompra;
     private javax.swing.JButton btnPesquisaCliente;
-    private javax.swing.JButton btnPesquisaProduto;
-    private javax.swing.JComboBox<String> cbTipoPesquisa;
-    private javax.swing.JComboBox<String> cbTipoPesquisaClientes;
+    private javax.swing.JButton btnPesquisaCliente1;
     private javax.swing.JCheckBox checkSemCadastro;
     private javax.swing.JTextField fieldDesconto;
     private javax.swing.JTextField fieldPesquisaCliente;
-    private javax.swing.JTextField fieldPesquisaProduto;
     private javax.swing.JTextField fieldTotal;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel lblDesconto;
     private javax.swing.JLabel lblUsuarioSelecionado;
     private javax.swing.JPanel pnlCarrinho;
     private javax.swing.JPanel pnlClientes;

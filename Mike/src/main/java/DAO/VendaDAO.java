@@ -17,10 +17,21 @@ import model.beans.VendaDescricao;
 import java.util.Date;
 import javax.swing.JOptionPane;
 
+/**
+* Classe com o objetivo de conter os codigos que relacionam Cliente e o banco de dados SQL
+* @author William Araujo
+* @see model.beans.*
+*/
 public class VendaDAO {
 
     static String url = "jdbc:sqlite:C:/sqlite/mike";
-
+    
+     /**
+        * Método utilizado para adicionar a venda no banco de dados
+        * @author William Araujo
+        * @see model.beans.*
+        * @param venda objeto do tipo VendaDescricao
+        */
     public void efetuaVenda(VendaDescricao venda) throws ClassNotFoundException, SQLException {
         boolean retorno = false;
         Connection conexao = null;
@@ -36,12 +47,13 @@ public class VendaDAO {
             conexao = (Connection) DriverManager.getConnection(url);
 
             //preparando query para o banco de dados;
-            PreparedStatement sql = conexao.prepareStatement("INSERT INTO venda(valorVenda,dtVenda, cpfCliente) VALUES(?,?,?)");
+            PreparedStatement sql = conexao.prepareStatement("INSERT INTO venda(valorVenda,dtVenda, cpfCliente, valorDesconto) VALUES(?,?,?,?)");
 
             //parametros da query 
             sql.setDouble(1, venda.getVenda().getValorVenda());
             sql.setString(2, String.valueOf(sqlDate.toString()));
             sql.setString(3, String.valueOf(venda.getVenda().getCliente().getCpfCliente()));
+            sql.setDouble(4, venda.getVenda().getValorDesconto());
 
             //executa comando sql
             sql.executeUpdate();
@@ -53,15 +65,16 @@ public class VendaDAO {
                 idVenda = rs.getInt(1);
             }
 
-            sql = conexao.prepareStatement("INSERT INTO venda_descricao(idVenda,idProduto, qtdProduto, precoProduto) VALUES(?,?,?,?)");
+            sql = conexao.prepareStatement("INSERT INTO venda_descricao(idVenda, qtdProduto, precoProduto, nomeProduto, nomeCliente) VALUES(?,?,?,?,?)");
 
             // Inserir descrição da venda
             for (Produto produto : venda.getListaProdutos()) {
                 sql.setInt(1, idVenda);
-                sql.setInt(2, produto.getIdProduto());
-                sql.setInt(3, produto.getQtdProduto());
-                sql.setDouble(4, produto.getPrecoProduto());
-                sql.executeUpdate();
+                sql.setInt(2, produto.getQtdProduto());
+                sql.setDouble(3, produto.getPrecoProduto());
+                sql.setString(4, produto.getNomeProduto());
+                sql.setString(5, venda.getVenda().getCliente().getNomeCliente());
+                                sql.executeUpdate();
                 alteraQuantidade(produto);
             }
 
@@ -71,7 +84,13 @@ public class VendaDAO {
             throw new SQLException("Erro de SQL, contate o adminstrador!\n" + ex);
         }
     }
-
+    
+    /**
+        * Método utilizado para alterar a quantidade de produto no banco de dados de acordo com a venda
+        * @author William Araujo
+        * @see model.beans.*
+        * @param obj objeto do tipo Produto
+        */
     public static boolean alteraQuantidade(Produto obj) {
         boolean retorno = false;
         Connection conexao = null;
@@ -101,7 +120,12 @@ public class VendaDAO {
 
         return retorno;
     }
-
+    
+    /**
+        * Método utilizado para encontrar a venda_descrição de acordo com o id da venda no banco de dados
+        * @author William Araujo
+        * @see model.beans.*
+        */
     public static ArrayList<VendaDescricao>buscarPorVenda(int idVenda) throws ParseException {
         
         Venda venda;
@@ -121,13 +145,9 @@ public class VendaDAO {
             conexao = DriverManager.getConnection(url);
 
             // SELECT
-            PreparedStatement comandoSQL = conexao.prepareStatement("SELECT a.idProduto, a.qtdProduto,a.precoProduto,b.nomeProduto,d.nomeCliente,d.cpfCliente,c.dtVenda FROM venda_descricao a "
-                    + "inner join produto b "
-                    + "on a.idProduto = b.idProduto "
+            PreparedStatement comandoSQL = conexao.prepareStatement("SELECT a.qtdProduto,a.precoProduto,a.nomeProduto,a.nomeCliente,c.cpfCliente,c.dtVenda, c.valorDesconto FROM venda_descricao a "
                     + "inner join venda c "
                     + "on c.idVenda = a.idVenda "
-                    + "inner join cliente d "
-                    + "on d.cpfCliente = c.cpfCliente "
                     + "WHERE a.idVenda = ?");
 
             comandoSQL.setInt(1, idVenda);
@@ -137,7 +157,6 @@ public class VendaDAO {
 
             while (rs.next()) {
                 // Para cada linha, cria um objeto computador e adiciona à lista de retorno
-                int idProd = rs.getInt("idProduto");
                 String nomeProduto = rs.getString("nomeProduto");
                 double precoProduto = rs.getDouble("precoProduto");
                 int qtdProduto = rs.getInt("qtdProduto");
@@ -147,15 +166,15 @@ public class VendaDAO {
                 
                 java.util.Date dataDate = formato.parse(dtVenda);
                 
+                double desconto = rs.getDouble("valorDesconto");
                 produto = new Produto();
                 
-                produto.setIdProduto(idProd);
                 produto.setNomeProduto(nomeProduto);
                 produto.setQtdProduto(qtdProduto);
                                 
                 cliente = new Cliente(cpfCliente,nomeCliente);
                 venda = new Venda(precoProduto, dataDate, cliente);
-                
+                venda.setValorDesconto(desconto);
                 
                 VendaDescricao item = new VendaDescricao(venda,produto);
                 lstVenda.add(item);
@@ -168,10 +187,15 @@ public class VendaDAO {
 
         return lstVenda;
     }
-
+    
+    /**
+        * Método utilizado para listar todas as vendas do banco de dados
+        * @author William Araujo
+        * @see model.beans.*
+        */
     public static ArrayList<Venda> listar() throws ClassNotFoundException, SQLException, ParseException {
         ArrayList<Venda> lstVenda = new ArrayList<>();
-        Cliente cliente = new Cliente();
+        Cliente cliente;
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
 
         Connection conexao;
@@ -194,12 +218,14 @@ public class VendaDAO {
                 Double valor = rs.getDouble("valorVenda");
                 String data = rs.getString("dtVenda");
                 String cpfCliente = rs.getString("cpfCliente");
-
+                Double valorDesconto = rs.getDouble("valorDesconto");
+                
+                cliente = new Cliente();
                 cliente.setCpfCliente(cpfCliente);
                 java.util.Date dataDate = formato.parse(data);
-
+                                
                 Venda item = new Venda(idVenda, valor, dataDate, cliente);
-
+                item.setValorDesconto(valorDesconto);
                 lstVenda.add(item);
             }
         } catch (ClassNotFoundException ex) {
@@ -212,14 +238,23 @@ public class VendaDAO {
         return lstVenda;
     }
     
+    /**
+        * Método utilizado para encontrar a venda de acordo com a data passada pelo usuario
+        * @author William Araujo
+     * @param dtInicio
+     * @param dtFim
+     * @return 
+     * @throws java.text.ParseException 
+        * @see model.beans.*
+        */
     public static ArrayList<Venda>buscarVendaData(java.util.Date dtInicio, java.util.Date dtFim) throws ParseException {
-        Connection conexao = null;
+        Connection conexao;
         SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
 
         java.util.Date dataInicio = new java.sql.Date(dtInicio.getTime());
         java.util.Date dataFim = new java.sql.Date(dtFim.getTime());
         ArrayList<Venda> lstVenda = new ArrayList<>();
-        Cliente cliente = new Cliente();
+        Cliente cliente;
         
  
         try {
@@ -243,12 +278,13 @@ public class VendaDAO {
                 Double valor = rs.getDouble("valorVenda");
                 String data = rs.getString("dtVenda");
                 String cpfCliente = rs.getString("cpfCliente");
-
+                Double valorDesconto = rs.getDouble("valorDesconto");
+                cliente = new Cliente();
                 cliente.setCpfCliente(cpfCliente);
                 java.util.Date dataDate = formato.parse(data);
 
                 Venda item = new Venda(idVenda, valor, dataDate, cliente);
-
+                item.setValorDesconto(valorDesconto);
                 lstVenda.add(item);
             }
         } catch (ClassNotFoundException | SQLException ex) {

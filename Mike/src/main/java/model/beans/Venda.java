@@ -6,7 +6,16 @@ public class Venda {
 
     private int idVenda;
     private double valorVenda;
+    private double valorDesconto;
     private char statusVenda;
+
+    public double getValorDesconto() {
+        return valorDesconto;
+    }
+
+    public void setValorDesconto(double valorDesconto) {
+        this.valorDesconto = valorDesconto;
+    }
     private Date dtVenda;
     Cliente cliente;
 

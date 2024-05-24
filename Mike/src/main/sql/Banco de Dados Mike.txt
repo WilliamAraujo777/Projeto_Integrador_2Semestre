@@ -1,0 +1,58 @@
+CREATE DATABASE mike;
+
+USE mike;
+
+CREATE TABLE endereco(
+idEndereco INTEGER PRIMARY KEY AUTOINCREMENT,
+logradouro VARCHAR(90) NOT NULL,
+CEP VARCHAR(8) NOT NULL,
+bairro VARCHAR(60) NOT NULL,
+cidade VARCHAR(60) NOT NULL,
+estado VARCHAR(60) NOT NULL,
+numero VARCHAR(5) NOT NULL,
+complemento VARCHAR(300),
+cpfCliente char(11),
+FOREIGN KEY (cpfCliente) REFERENCES cliente(cpfCliente),
+PRIMARY KEY(idEndereco)
+);
+
+CREATE TABLE cliente(
+cpfCliente 		VARCHAR(11) PRIMARY KEY,
+nomeCliente 	VARCHAR(60) not null,
+sexoCliente 	char(1) 	not null,
+emailCliente 	VARCHAR(200)not null,
+numeroCliente 	VARCHAR(11) not null,
+dtNascimento 	DATE        not null
+);
+
+CREATE TABLE categoria(
+idCategoria INTEGER PRIMARY KEY AUTOINCREMENT,
+nomeCategoria VARCHAR(60) NOT NULL
+);
+
+CREATE TABLE produto(
+idProduto INTEGER PRIMARY KEY AUTOINCREMENT,
+nomeProduto VARCHAR(60) NOT NULL,
+precoProduto decimal(14,2) NOT NULL,
+qtdProduto INT NOT NULL,
+idCategoria INT NOT NULL,
+ FOREIGN KEY (idCategoria) REFERENCES categoria(idCategoria)
+);
+
+CREATE TABLE venda(
+idVenda 	INTEGER PRIMARY KEY AUTOINCREMENT,
+valorVenda 	numeric(14,2)NOT NULL,
+dtVenda 	date,
+cpfCliente 	char(11) NOT NULL,
+valorDesconto 	numeric(14,2)NULL,
+FOREIGN KEY (cpfCliente) REFERENCES cliente(cpfCliente)
+);
+
+CREATE TABLE venda_descricao(
+idVenda 		INTEGER PRIMARY KEY,
+qtdProduto		INTEGER,
+precoProduto	decimal(14,2),
+nomeProduto		VARCHAR(60),
+nomeCliente		VARCHAR(100),
+FOREIGN KEY (idVenda) REFERENCES venda(idVenda)
+);

@@ -7,12 +7,17 @@ package view.panels;
 import DAO.ProdutoDAO;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import model.beans.Categoria;
 import model.beans.Produto;
+import util.Validador;
 import view.CadastroProduto;
 import view.TelaPrincipal;
 
@@ -26,14 +31,17 @@ public class TelaProdutos extends javax.swing.JPanel {
      * Creates new form Produtos
      */
     JFrame parent;
+
     public TelaProdutos(JFrame parent) {
         initComponents();
-         atualizarTabela();
-         this.parent = parent;
+        atualizarTabela();
+        this.parent = parent;
+        apenasNumeros(fieldPesquisaID);
+
     }
-    
+
     public TelaProdutos() {
-    
+        apenasNumeros(fieldPesquisaID);
     }
 
     /**
@@ -47,11 +55,13 @@ public class TelaProdutos extends javax.swing.JPanel {
 
         jScrollPane3 = new javax.swing.JScrollPane();
         tblProdutos = new javax.swing.JTable();
-        txtNomeProdFiltro = new javax.swing.JTextField();
+        fieldPesquisaID = new javax.swing.JTextField();
         btnListar = new javax.swing.JButton();
         btnAdicionar = new javax.swing.JButton();
         btnAlterar = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
+        btnPesquisa = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(722, 500));
@@ -97,6 +107,15 @@ public class TelaProdutos extends javax.swing.JPanel {
             }
         });
 
+        btnPesquisa.setText("Pesquisar ID");
+        btnPesquisa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisaActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("ID:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -105,7 +124,13 @@ public class TelaProdutos extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
-                    .addComponent(txtNomeProdFiltro))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(fieldPesquisaID, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnPesquisa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(352, 352, 352)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnListar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -119,13 +144,15 @@ public class TelaProdutos extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtNomeProdFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnListar))
+                    .addComponent(fieldPesquisaID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPesquisa)
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 459, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnListar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnAdicionar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnAlterar)
@@ -136,30 +163,9 @@ public class TelaProdutos extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListarActionPerformed
-        // Verifica se o usuário está procurando por algum processador em específico
-        if (txtNomeProdFiltro.getText().strip().equals("")) {
-            atualizarTabela();
-        } else {
-            String nomeProd = txtNomeProdFiltro.getText();
-
-            Produto retorno = ProdutoDAO.buscarPorNome(nomeProd); // Filtrando produtos pelo nome;
-
-            if (retorno != null) {
-                DefaultTableModel modelo = (DefaultTableModel) tblProdutos.getModel();
-                modelo.setRowCount(0);
-
-                modelo.addRow(new String[]{
-                    String.valueOf(retorno.getIdProduto()),
-                    String.valueOf(retorno.getNomeProduto()),
-                    String.valueOf(retorno.getPrecoProduto()),
-                    String.valueOf(retorno.getQtdProduto()),
-                    String.valueOf(retorno.getIdCategoria())
-                });
-            }
-        }
+        atualizarTabela();
     }//GEN-LAST:event_btnListarActionPerformed
 
- 
 
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
         CadastroProduto cadastro = new CadastroProduto(parent, this);
@@ -169,7 +175,7 @@ public class TelaProdutos extends javax.swing.JPanel {
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
         int linhaSelecionada = tblProdutos.getSelectedRow(); // Recebendo a linha selecionada
         Categoria categoria = new Categoria();
-        
+
         // Recebendo dados da linha selecionada
         if (linhaSelecionada >= 0) {
             DefaultTableModel modelo = (DefaultTableModel) tblProdutos.getModel();
@@ -177,10 +183,9 @@ public class TelaProdutos extends javax.swing.JPanel {
             String nomeProd = (modelo.getValueAt(linhaSelecionada, 1).toString());
             double precProd = (Double.parseDouble(modelo.getValueAt(linhaSelecionada, 2).toString()));
             int qtdProd = (Integer.parseInt(modelo.getValueAt(linhaSelecionada, 3).toString()));
-            
-          
+
             String nomeCategoria = (modelo.getValueAt(linhaSelecionada, 4).toString());
-            
+
             categoria.setnomeCategoria(nomeCategoria);
 
             Produto alterarProduto = new Produto(idProd, nomeProd, precProd, qtdProd, categoria); // Passando os dados para o construtor que os modifica
@@ -212,6 +217,31 @@ public class TelaProdutos extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
+    private void btnPesquisaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisaActionPerformed
+        fieldPesquisaID.setBorder(javax.swing.BorderFactory.createLineBorder(Color.GRAY));
+        if (!validaCampos()) {
+            return;
+        }
+
+        int idProduto = Integer.parseInt(fieldPesquisaID.getText());
+        Produto retorno = ProdutoDAO.buscaPorId(idProduto);
+
+        if (retorno != null) {
+            DefaultTableModel modelo = (DefaultTableModel) tblProdutos.getModel();
+            modelo.setRowCount(0);
+
+            modelo.addRow(new String[]{
+                String.valueOf(retorno.getIdProduto()),
+                String.valueOf(retorno.getNomeProduto()),
+                String.valueOf(retorno.getPrecoProduto()),
+                String.valueOf(retorno.getQtdProduto()),
+                String.valueOf(retorno.getIdCategoria())
+            });
+        }else{
+            JOptionPane.showMessageDialog(this, "Produto não encontrado!");
+        }
+    }//GEN-LAST:event_btnPesquisaActionPerformed
+
     public void atualizarTabela() {
         // Chama a DAO para listar as notas
         ArrayList<Produto> produtos = ProdutoDAO.listar();
@@ -233,14 +263,46 @@ public class TelaProdutos extends javax.swing.JPanel {
             });
         }
     }
+    
+     private boolean validaCampos() {
+        Validador valida = new Validador();
+        try {
+            fieldPesquisaID = (JTextField) valida.validaTextField(fieldPesquisaID);
+          
+            return true;
+         } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Verifique se os campos estão preenchidos");
+            return false;
+        }
+    }
+
+    private void apenasNumeros(JTextField input) {
+
+        input.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent evt) {
+                char c = evt.getKeyChar();
+                String value = input.getText();
+                int l = value.length();
+                if (Character.isDigit(c) || c == KeyEvent.VK_BACK_SPACE || c == KeyEvent.VK_DELETE) {
+                    input.setEditable(true);
+                } else {
+                    input.setEditable(false);
+                }
+            }
+        });
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionar;
     private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnListar;
+    private javax.swing.JButton btnPesquisa;
+    private javax.swing.JTextField fieldPesquisaID;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable tblProdutos;
-    private javax.swing.JTextField txtNomeProdFiltro;
     // End of variables declaration//GEN-END:variables
 }
